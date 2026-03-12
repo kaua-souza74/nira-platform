@@ -1,0 +1,276 @@
+/* ── GOOGLE FONTS ── */
+@import url('https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ─────────────────────────────────────────
+   VARIÁVEIS – Identidade Visual NIRA / E.Y.E
+   Paleta: Apagado Índigo #6B6898 · #EFEEEA · #000000 · #F4F6F8
+───────────────────────────────────────── */
+:root {
+  --indigo:        #6B6898;
+  --indigo-dark:   #4A4870;
+  --indigo-deeper: #2D2B4E;
+  --indigo-light:  #8B88B8;
+  --bg-deep:       #12111F;
+  --bg-dark:       #1A1830;
+  --bg-card:       rgba(45, 43, 78, 0.6);
+  --bg-glass:      rgba(107, 104, 152, 0.1);
+  --white:         #F4F6F8;
+  --off-white:     #EFEEEA;
+  --text-main:     #FFFFFF;
+  --text-muted:    rgba(239, 238, 234, 0.65);
+  --text-dim:      rgba(239, 238, 234, 0.4);
+  --accent:        #9B8FFF;
+  --accent-glow:   rgba(155, 143, 255, 0.25);
+  --danger:        #FF4757;
+  --danger-glow:   rgba(255, 71, 87, 0.3);
+  --success:       #2ED573;
+  --warning:       #FFC800;
+  --font-display:  'Anonymous Pro', 'Courier New', monospace;
+  --font-body:     'Anonymous Pro', 'Courier New', monospace;
+  --radius-sm:     6px;
+  --radius-md:     12px;
+  --radius-lg:     20px;
+  --radius-xl:     32px;
+  --shadow-card:   0 8px 32px rgba(0,0,0,0.5);
+  --ease:          0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-main);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+h1,h2,h3,h4,h5,h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+a  { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; font-family: var(--font-body); }
+ul,ol { list-style: none; }
+
+/* ─── LAYOUT ─── */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.page-wrapper {
+  min-height: 100vh;
+  padding-top: 70px;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--indigo); border-radius: 3px; }
+
+/* ─── KEYFRAMES ─── */
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity:0; } to { opacity:1; }
+}
+@keyframes float {
+  0%,100% { transform:translateY(0); }
+  50%      { transform:translateY(-12px); }
+}
+@keyframes pulseRing {
+  0%   { transform:scale(1); opacity:.6; }
+  100% { transform:scale(1.8); opacity:0; }
+}
+@keyframes glowPulse {
+  0%,100% { box-shadow:0 0 16px var(--danger-glow); }
+  50%      { box-shadow:0 0 40px var(--danger-glow), 0 0 70px var(--danger-glow); }
+}
+@keyframes spin {
+  from { transform:rotate(0deg); }
+  to   { transform:rotate(360deg); }
+}
+@keyframes slideIn {
+  from { opacity:0; transform:translateX(-12px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* ─── BOTÕES GLOBAIS ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  transition: var(--ease);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  border: none;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg-deep);
+  padding: 12px 24px;
+  font-size: .9rem;
+}
+.btn-primary:hover {
+  background: #B8AEFF;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(155,143,255,.4);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  padding: 12px 24px;
+  border: 1.5px solid rgba(255,255,255,.22);
+  font-size: .9rem;
+}
+.btn-outline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+.btn-sm  { padding: 7px 16px; font-size: .8rem; }
+.btn-lg  { padding: 15px 32px; font-size: 1rem; border-radius: var(--radius-lg); }
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  padding: 13px 26px;
+  font-size: .9rem;
+  border-radius: var(--radius-lg);
+  animation: glowPulse 2s ease-in-out infinite;
+}
+.btn-danger:hover { background:#FF6B7A; transform:scale(1.03); }
+.btn-ghost {
+  background: rgba(107,104,152,.12);
+  border: 1px solid rgba(107,104,152,.22);
+  color: rgba(239,238,234,.7);
+  padding: 8px 16px;
+  font-size: .82rem;
+  border-radius: var(--radius-sm);
+}
+.btn-ghost:hover { border-color: rgba(155,143,255,.4); color: #9B8FFF; }
+
+/* ─── SEÇÃO PADRÃO ─── */
+.section {
+  padding: 90px 0;
+}
+.section-label {
+  display: inline-block;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.section-sub {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 520px;
+  line-height: 1.75;
+}
+
+/* ─── CARD PADRÃO ─── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid rgba(107,104,152,.18);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  backdrop-filter: blur(8px);
+  transition: all .32s;
+}
+.card:hover {
+  border-color: rgba(155,143,255,.3);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.4);
+}
+
+/* ─── DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(107,104,152,.4), transparent);
+  margin: 0;
+}
+
+/* ─── BADGE ─── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(107,104,152,.18);
+  border: 1px solid rgba(107,104,152,.32);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: .7rem;
+  color: var(--accent);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.badge-danger  { background: rgba(255,71,87,.14); border-color: rgba(255,71,87,.3); color: var(--danger); }
+.badge-success { background: rgba(46,213,115,.12); border-color: rgba(46,213,115,.28); color: var(--success); }
+.badge-warning { background: rgba(255,200,0,.12); border-color: rgba(255,200,0,.28); color: var(--warning); }
+
+/* ─── FORMULÁRIO ─── */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: .78rem;
+  color: rgba(239,238,234,.55);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+}
+.form-input {
+  width: 100%;
+  background: rgba(107,104,152,.1);
+  border: 1.5px solid rgba(107,104,152,.25);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: .9rem;
+  color: var(--white);
+  transition: border-color .3s;
+}
+.form-input:focus {
+  outline: none;
+  border-color: rgba(155,143,255,.5);
+  background: rgba(107,104,152,.15);
+}
+.form-input::placeholder { color: rgba(239,238,234,.28); }
+.form-select {
+  width: 100%;
+  background: rgba(107,104,152,.1);
+  border: 1.5px solid rgba(107,104,152,.25);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: .9rem;
+  color: var(--white);
+  cursor: pointer;
+  transition: border-color .3s;
+  appearance: none;
+}
+.form-select:focus { outline: none; border-color: rgba(155,143,255,.5); }
+.form-select option { background: var(--bg-dark); color: var(--white); }
