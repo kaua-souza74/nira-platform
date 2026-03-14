@@ -457,7 +457,7 @@ const RESPOSTAS_RAPIDAS = [
 ];
 
 export default function ChatPsicologoPage() {
-  const { user } = useAuth();
+  const { user, getVinculoLabel } = useAuth();
   const [casoAtivo, setCasoAtivo] = useState(null);
   const [casos, setCasos]         = useState(CASOS_MOCK);
   const [filtro, setFiltro]       = useState('todos');
@@ -517,6 +517,36 @@ export default function ChatPsicologoPage() {
       <style>{css}</style>
       <Navbar />
       <div className="psichat-page">
+        {/* ── Banner de vínculo ── */}
+        <div style={{
+          background:'rgba(107,104,152,.1)', borderBottom:'1px solid rgba(107,104,152,.15)',
+          padding:'8px 20px', display:'flex', alignItems:'center', justifyContent:'space-between',
+          gap:12, flexWrap:'wrap',
+        }}>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <span style={{fontSize:'1rem'}}>
+              {user.especialidade === 'psicologo' ? '🧠' : user.especialidade === 'assistente_social' ? '🤝' : '👤'}
+            </span>
+            <div>
+              <span style={{fontWeight:700,fontSize:'.85rem',color:'#F4F6F8'}}>{user.nome}</span>
+              <span style={{margin:'0 8px',color:'rgba(107,104,152,.4)'}}>·</span>
+              <span style={{fontSize:'.78rem',color:'rgba(239,238,234,.5)'}}>
+                {user.especialidade?.replace('_',' ')}
+              </span>
+            </div>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:7}}>
+            <span style={{fontSize:'.72rem',color:'rgba(239,238,234,.38)'}}>Vínculo:</span>
+            <span style={{
+              background:'rgba(107,104,152,.15)', border:'1px solid rgba(107,104,152,.25)',
+              borderRadius:100, padding:'3px 12px', fontSize:'.75rem', fontWeight:600,
+              color:'rgba(239,238,234,.75)',
+            }}>
+              {getVinculoLabel(user.vinculo, user.ongId)}
+            </span>
+          </div>
+        </div>
+
         <div className="psichat-wrap">
 
           {/* ── FILA ── */}
@@ -724,6 +754,7 @@ export default function ChatPsicologoPage() {
           </aside>
         </div>
       </div>
+    
     </>
   );
 }

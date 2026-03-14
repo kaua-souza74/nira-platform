@@ -82,9 +82,12 @@ const css = `
 `;
 
 const DEMO_USERS = [
-  { badge:'adm',  label:'ADM',         usuario:'admin',    senha:'nira2026' },
-  { badge:'ong',  label:'ONG',         usuario:'ong_vida', senha:'ong123'   },
-  { badge:'func', label:'Funcionário', usuario:'agente01', senha:'chat123'  },
+  { badge:'adm',  label:'ADM',              usuario:'admin',        senha:'nira2026'  },
+  { badge:'ong',  label:'ONG Vida Nova',    usuario:'ong_vida',     senha:'ong123'    },
+  { badge:'ong',  label:'ONG Renascer',     usuario:'ong_renascer', senha:'ren123'    },
+  { badge:'func', label:'Psicóloga',        usuario:'psicologa01',  senha:'chat123'   },
+  { badge:'func', label:'Policial / Campo', usuario:'policial01',   senha:'mapa123'   },
+  { badge:'func', label:'Agente de Campo',  usuario:'agente01',    senha:'agente123' },
 ];
 
 export default function LoginPage() {

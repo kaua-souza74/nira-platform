@@ -1,219 +1,332 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const css = `
-/* ── HERO ── */
+/* ════════ HERO ════════ */
 .home-hero {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  background: radial-gradient(ellipse 80% 55% at 50% -5%, rgba(107,104,152,.32) 0%, transparent 65%),
-              var(--bg-deep);
+  display: flex; align-items: center;
+  position: relative; overflow: hidden;
+  background: radial-gradient(ellipse 80% 55% at 50% -5%, rgba(107,104,152,.32) 0%, transparent 65%), var(--bg-deep);
 }
-.home-hero__orb1 {
-  position: absolute; top: -80px; right: -80px;
-  width: 460px; height: 460px; border-radius: 50%;
-  background: rgba(107,104,152,.14); filter: blur(80px); pointer-events: none;
-}
-.home-hero__orb2 {
-  position: absolute; bottom: 30px; left: -60px;
-  width: 280px; height: 280px; border-radius: 50%;
-  background: rgba(155,143,255,.08); filter: blur(70px); pointer-events: none;
-}
-.home-hero__inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 56px;
-  align-items: center;
-  padding: 90px 24px 70px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-}
-.home-hero__badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(107,104,152,.18);
-  border: 1px solid rgba(107,104,152,.35);
-  border-radius: 100px; padding: 5px 15px;
-  font-size: .7rem; color: #9B8FFF;
-  letter-spacing: .1em; text-transform: uppercase;
-  margin-bottom: 24px;
-  animation: fadeInUp .6s ease both;
-}
-.home-hero__badge-dot { width:6px; height:6px; border-radius:50%; background:#9B8FFF; animation: glowPulse 2s ease-in-out infinite; }
-.home-hero__title {
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
-  font-weight: 700; line-height: 1.06;
-  margin-bottom: 20px;
-  animation: fadeInUp .65s .08s ease both;
-}
-.home-hero__title span { color: #9B8FFF; }
-.home-hero__quote {
-  font-style: italic;
-  font-size: .98rem; color: rgba(239,238,234,.65);
-  margin-bottom: 18px;
-  animation: fadeInUp .65s .14s ease both;
-}
-.home-hero__desc {
-  font-size: 1rem; color: rgba(239,238,234,.6);
-  line-height: 1.78; margin-bottom: 36px;
-  max-width: 460px;
-  animation: fadeInUp .65s .2s ease both;
-}
-.home-hero__actions {
-  display: flex; gap: 12px; flex-wrap: wrap;
-  margin-bottom: 48px;
-  animation: fadeInUp .65s .28s ease both;
-}
-.home-hero__stats {
-  display: flex; gap: 24px; align-items: center;
-  animation: fadeInUp .65s .35s ease both;
-  flex-wrap: wrap;
-}
-.home-hero__stat-num {
-  display: block; font-weight: 700;
-  font-size: 1.55rem; color: #F4F6F8;
-}
-.home-hero__stat-lbl {
-  font-size: .7rem; color: rgba(239,238,234,.45);
-  text-transform: uppercase; letter-spacing: .05em;
-}
-.home-hero__divider { width:1px; height:34px; background: rgba(107,104,152,.35); }
-
-/* visual lado direito */
-.home-hero__visual {
-  display: flex; align-items: center; justify-content: center;
-  position: relative; animation: fadeIn .9s .3s ease both;
-}
-.home-hero__owl-circle {
-  width: 280px; height: 280px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(107,104,152,.22) 0%, transparent 70%);
-  border: 1px solid rgba(107,104,152,.28);
-  display: flex; align-items: center; justify-content: center;
-  position: relative; animation: float 5s ease-in-out infinite;
-}
-.home-hero__owl { font-size: 8rem; filter: drop-shadow(0 0 28px rgba(155,143,255,.45)); user-select: none; }
-.home-hero__ring {
-  position: absolute; border-radius: 50%;
-  border: 1px solid rgba(107,104,152,.15);
-  animation: pulseRing 3s ease-out infinite; pointer-events: none;
-}
+.home-hero__orb1 { position:absolute; top:-80px; right:-80px; width:460px; height:460px; border-radius:50%; background:rgba(107,104,152,.14); filter:blur(80px); pointer-events:none; }
+.home-hero__orb2 { position:absolute; bottom:30px; left:-60px; width:280px; height:280px; border-radius:50%; background:rgba(155,143,255,.08); filter:blur(70px); pointer-events:none; }
+.home-hero__inner { display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; padding:90px 24px 70px; max-width:1200px; margin:0 auto; width:100%; position:relative; z-index:1; }
+.home-hero__badge { display:inline-flex; align-items:center; gap:8px; background:rgba(107,104,152,.18); border:1px solid rgba(107,104,152,.35); border-radius:100px; padding:5px 15px; font-size:.7rem; color:#9B8FFF; letter-spacing:.1em; text-transform:uppercase; margin-bottom:24px; animation:fadeInUp .6s ease both; font-weight:600; }
+.home-hero__badge-dot { width:6px; height:6px; border-radius:50%; background:#9B8FFF; animation:glowPulse 2s ease-in-out infinite; }
+.home-hero__title { font-size:clamp(2.2rem,5vw,3.6rem); font-weight:800; line-height:1.06; margin-bottom:20px; animation:fadeInUp .65s .08s ease both; letter-spacing:-.02em; }
+.home-hero__title span { color:#9B8FFF; }
+.home-hero__quote { font-style:italic; font-size:.98rem; color:rgba(239,238,234,.65); margin-bottom:18px; animation:fadeInUp .65s .14s ease both; }
+.home-hero__desc { font-size:1rem; color:rgba(239,238,234,.6); line-height:1.78; margin-bottom:36px; max-width:460px; animation:fadeInUp .65s .2s ease both; font-weight:400; }
+.home-hero__actions { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:48px; animation:fadeInUp .65s .28s ease both; }
+.home-hero__stats { display:flex; gap:0; align-items:stretch; animation:fadeInUp .65s .35s ease both; background:rgba(45,43,78,.45); border:1px solid rgba(107,104,152,.2); border-radius:16px; overflow:hidden; }
+.home-hero__stat { flex:1; padding:16px 20px; border-right:1px solid rgba(107,104,152,.18); text-align:center; }
+.home-hero__stat:last-child { border-right:none; }
+.home-hero__stat-num { display:block; font-weight:800; font-size:1.7rem; color:#F4F6F8; line-height:1; margin-bottom:4px; }
+.home-hero__stat-lbl { font-size:.65rem; color:rgba(239,238,234,.42); text-transform:uppercase; letter-spacing:.06em; }
+.home-hero__visual { display:flex; align-items:center; justify-content:center; position:relative; animation:fadeIn .9s .3s ease both; }
+.home-hero__owl-circle { width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(107,104,152,.22) 0%,transparent 70%); border:1px solid rgba(107,104,152,.28); display:flex; align-items:center; justify-content:center; position:relative; animation:float 5s ease-in-out infinite; }
+.home-hero__owl { font-size:8rem; filter:drop-shadow(0 0 28px rgba(155,143,255,.45)); user-select:none; }
+.home-hero__ring { position:absolute; border-radius:50%; border:1px solid rgba(107,104,152,.15); animation:pulseRing 3s ease-out infinite; pointer-events:none; }
 .home-hero__ring1 { width:340px; height:340px; animation-delay:0s; }
 .home-hero__ring2 { width:400px; height:400px; animation-delay:.7s; }
-/* floating cards */
-.home-hero__fcard {
-  position: absolute;
-  background: rgba(45,43,78,.88); backdrop-filter: blur(12px);
-  border: 1px solid rgba(107,104,152,.28); border-radius: 13px;
-  padding: 11px 14px; display: flex; align-items: center; gap: 9px;
-  white-space: nowrap; box-shadow: 0 8px 28px rgba(0,0,0,.4);
-  animation: fadeInUp .7s ease both;
-}
-.home-hero__fcard1 { top: 6%;  left: -12%; animation-delay:.5s; }
-.home-hero__fcard2 { bottom:15%; left: -10%; animation-delay:.7s; }
-.home-hero__fcard3 { top: 10%; right:-10%; animation-delay:.9s; }
+.home-hero__fcard { position:absolute; background:rgba(45,43,78,.88); border:1px solid rgba(107,104,152,.28); border-radius:13px; padding:11px 14px; display:flex; align-items:center; gap:9px; white-space:nowrap; box-shadow:0 8px 28px rgba(0,0,0,.4); animation:fadeInUp .7s ease both; }
+.home-hero__fcard1 { top:6%; left:-12%; animation-delay:.5s; }
+.home-hero__fcard2 { bottom:15%; left:-10%; animation-delay:.7s; }
+.home-hero__fcard3 { top:10%; right:-10%; animation-delay:.9s; }
 .home-hero__fcard-icon { font-size:1.3rem; }
 .home-hero__fcard-title { font-weight:700; font-size:.82rem; color:#F4F6F8; }
 .home-hero__fcard-sub { font-size:.68rem; color:rgba(239,238,234,.5); }
 
-/* ── DORES ── */
-.home-dores { padding: 90px 0; background: var(--bg-dark); }
-.home-dores__grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
-.home-dores__card { background:var(--bg-card); border:1px solid rgba(107,104,152,.18); border-radius:18px; padding:28px 22px; transition:all .32s; backdrop-filter:blur(8px); position:relative; overflow:hidden; }
-.home-dores__card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,transparent,#9B8FFF,transparent); opacity:0; transition:opacity .32s; }
-.home-dores__card:hover { border-color:rgba(155,143,255,.32); transform:translateY(-5px); box-shadow:0 18px 38px rgba(0,0,0,.4); }
-.home-dores__card:hover::before { opacity:1; }
-.home-dores__icon { font-size:2rem; margin-bottom:14px; display:block; }
-.home-dores__ctitle { font-weight:700; font-size:.95rem; text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px; color:#F4F6F8; }
-.home-dores__ctext { font-size:.875rem; color:rgba(239,238,234,.58); line-height:1.7; }
+/* ════════ CARDS DE DORES — nova animação ════════ */
+.home-dores { padding:90px 0; background:var(--bg-dark); }
+.home-dores__grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
 
-/* ── QUOTE ── */
+/* Card com reveal de conteúdo por baixo do ícone */
+.dore-card {
+  position: relative;
+  background: rgb(26, 24, 50);
+  border: 1px solid rgba(107,104,152,.18);
+  border-radius: 20px;
+  padding: 36px 24px 28px;
+  overflow: hidden;
+  cursor: default;
+  transition: border-color .35s, box-shadow .35s, transform .35s;
+  min-height: 200px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.dore-card:hover {
+  border-color: rgba(155,143,255,.38);
+  box-shadow: 0 20px 48px rgba(0,0,0,.5);
+  transform: translateY(-6px);
+}
+
+/* Orb de fundo — expande no hover */
+.dore-card__orb {
+  position: absolute;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--orb-color, rgba(155,143,255,.2)) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(0.5);
+  transition: transform .5s cubic-bezier(.34,1.4,.64,1), opacity .4s;
+  opacity: 0; pointer-events: none;
+}
+.dore-card:hover .dore-card__orb {
+  transform: translate(-50%,-50%) scale(2.5);
+  opacity: 1;
+}
+
+/* Ícone — sobe no hover */
+.dore-card__icon-wrap {
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  border: 2px solid rgba(107,104,152,.3);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+  position: relative; z-index: 1;
+  transition: border-color .35s, transform .35s, box-shadow .35s;
+  background: rgba(107,104,152,.1);
+  flex-shrink: 0;
+}
+.dore-card:hover .dore-card__icon-wrap {
+  border-color: rgba(155,143,255,.6);
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: 0 0 24px rgba(155,143,255,.25);
+  background: rgba(155,143,255,.12);
+}
+.dore-card__icon { font-size:1.8rem; line-height:1; position:relative; z-index:1; }
+
+/* Título — sempre visível */
+.dore-card__title {
+  font-weight: 700; font-size: .9rem;
+  color: rgba(239,238,234,.75);
+  text-transform: uppercase; letter-spacing: .06em;
+  text-align: center; margin-bottom: 0;
+  position: relative; z-index: 1;
+  transition: color .3s, transform .35s;
+}
+.dore-card:hover .dore-card__title {
+  color: #F4F6F8;
+  transform: translateY(-2px);
+}
+
+/* Texto — escondido, revela no hover */
+.dore-card__text {
+  font-size: .83rem; color: rgba(239,238,234,.65);
+  line-height: 1.7; text-align: center;
+  position: relative; z-index: 1;
+  max-height: 0; overflow: hidden;
+  opacity: 0;
+  margin-top: 0;
+  transition: max-height .4s cubic-bezier(0,1,.3,1), opacity .35s .05s, margin-top .35s;
+}
+.dore-card:hover .dore-card__text {
+  max-height: 120px;
+  opacity: 1;
+  margin-top: 12px;
+}
+
+/* Linha brilhante no topo */
+.dore-card::after {
+  content: '';
+  position: absolute; top: 0; left: 15%; right: 15%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--orb-color, rgba(155,143,255,.5)), transparent);
+  border-radius: 100px;
+  opacity: 0; transition: opacity .35s;
+}
+.dore-card:hover::after { opacity: 1; }
+
+/* ════════ QUOTE ════════ */
 .home-quote { padding:60px 0; background:var(--bg-deep); }
-.home-quote__box { max-width:780px; margin:0 auto; text-align:center; background:rgba(107,104,152,.07); border:1px solid rgba(107,104,152,.2); border-radius:18px; padding:40px; }
-.home-quote__text { font-style:italic; font-size:1.08rem; color:rgba(239,238,234,.78); line-height:1.82; margin-bottom:14px; }
-.home-quote__src { font-size:.75rem; color:rgba(239,238,234,.35); letter-spacing:.06em; }
+.home-quote__box { max-width:780px; margin:0 auto; text-align:center; background:rgba(107,104,152,.07); border:1px solid rgba(107,104,152,.2); border-radius:18px; padding:40px; position:relative; }
+.home-quote__box::before { content:'"'; position:absolute; top:-20px; left:36px; font-size:7rem; color:rgba(155,143,255,.12); font-family:Georgia,serif; line-height:1; pointer-events:none; }
+.home-quote__text { font-style:italic; font-size:1.05rem; color:rgba(239,238,234,.78); line-height:1.82; margin-bottom:14px; }
+.home-quote__src { font-size:.72rem; color:rgba(239,238,234,.32); letter-spacing:.08em; font-family:'Anonymous Pro',monospace; }
 
-/* ── SOLUÇÃO ── */
+/* ════════ SOLUÇÃO ════════ */
 .home-sol { padding:90px 0; background:var(--bg-dark); }
 .home-sol__inner { display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center; }
-.home-sol__items { display:flex; flex-direction:column; gap:16px; margin-bottom:36px; }
-.home-sol__item { display:flex; align-items:flex-start; gap:13px; padding:15px 18px; background:rgba(107,104,152,.09); border:1px solid rgba(107,104,152,.18); border-radius:13px; transition:border-color .28s; }
-.home-sol__item:hover { border-color:rgba(155,143,255,.38); }
-.home-sol__item-icon { font-size:1.5rem; flex-shrink:0; }
-.home-sol__item-title { font-weight:700; font-size:.88rem; margin-bottom:3px; color:#F4F6F8; }
-.home-sol__item-text { font-size:.845rem; color:rgba(239,238,234,.58); line-height:1.65; }
-.home-sol__nira { background:rgba(45,43,78,.65); border:1px solid rgba(107,104,152,.28); border-radius:22px; padding:44px 36px; text-align:center; backdrop-filter:blur(16px); }
+.home-sol__items { display:flex; flex-direction:column; gap:14px; margin-bottom:36px; }
+.home-sol__item { display:flex; align-items:flex-start; gap:14px; padding:16px 18px; background:rgba(107,104,152,.08); border:1px solid rgba(107,104,152,.15); border-radius:14px; transition:all .28s; }
+.home-sol__item:hover { border-color:rgba(155,143,255,.35); background:rgba(155,143,255,.07); }
+.home-sol__item-icon { font-size:1.5rem; flex-shrink:0; margin-top:2px; }
+.home-sol__item-title { font-weight:700; font-size:.88rem; margin-bottom:4px; color:#F4F6F8; }
+.home-sol__item-text { font-size:.845rem; color:rgba(239,238,234,.55); line-height:1.65; }
+.home-sol__nira { background:rgba(45,43,78,.65); border:1px solid rgba(107,104,152,.28); border-radius:22px; padding:44px 36px; text-align:center; position:relative; overflow:hidden; }
+.home-sol__nira::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%,rgba(155,143,255,.12) 0%,transparent 65%); pointer-events:none; }
 .home-sol__nira-owl { font-size:5.5rem; animation:float 5s ease-in-out infinite; display:block; filter:drop-shadow(0 0 22px rgba(155,143,255,.4)); margin-bottom:14px; }
-.home-sol__nira-name { font-weight:700; font-size:2.8rem; letter-spacing:.12em; color:#F4F6F8; margin-bottom:6px; }
-.home-sol__nira-full { font-size:.68rem; color:rgba(239,238,234,.4); letter-spacing:.09em; text-transform:uppercase; line-height:1.6; margin-bottom:24px; }
+.home-sol__nira-name { font-weight:800; font-size:2.8rem; letter-spacing:.12em; color:#F4F6F8; margin-bottom:6px; }
+.home-sol__nira-full { font-size:.68rem; color:rgba(239,238,234,.4); letter-spacing:.09em; text-transform:uppercase; line-height:1.6; margin-bottom:24px; font-family:'Anonymous Pro',monospace; }
 .home-sol__badges { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; }
-.home-sol__badge { background:rgba(107,104,152,.18); border:1px solid rgba(107,104,152,.28); border-radius:100px; padding:4px 12px; font-size:.68rem; color:#9B8FFF; letter-spacing:.07em; }
+.home-sol__badge { background:rgba(107,104,152,.18); border:1px solid rgba(107,104,152,.28); border-radius:100px; padding:5px 14px; font-size:.68rem; color:#9B8FFF; letter-spacing:.07em; font-weight:600; }
 
-/* ── PUBLICO ── */
+/* ════════ PÚBLICO ════════ */
 .home-pub { padding:90px 0; background:var(--bg-deep); }
 .home-pub__grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-.home-pub__card { background:var(--bg-card); border:1px solid rgba(107,104,152,.18); border-radius:18px; padding:30px; backdrop-filter:blur(8px); }
-.home-pub__ctitle { font-weight:700; font-size:.95rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:18px; color:rgba(239,238,234,.8); padding-bottom:12px; border-bottom:1px solid rgba(107,104,152,.2); }
-.home-pub__list { display:flex; flex-direction:column; gap:10px; }
-.home-pub__item { display:flex; align-items:center; gap:9px; font-size:.9rem; color:rgba(239,238,234,.7); }
+.home-pub__card { background:var(--bg-card); border:1px solid rgba(107,104,152,.15); border-radius:20px; padding:32px; }
+.home-pub__ctitle { font-weight:700; font-size:.9rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:20px; color:rgba(239,238,234,.8); padding-bottom:14px; border-bottom:1px solid rgba(107,104,152,.18); }
+.home-pub__list { display:flex; flex-direction:column; gap:11px; }
+.home-pub__item { display:flex; align-items:center; gap:10px; font-size:.9rem; color:rgba(239,238,234,.7); }
 .home-pub__dot { width:6px; height:6px; border-radius:50%; background:#9B8FFF; flex-shrink:0; }
 
-/* ── EQUIPE ── */
-.home-equipe { padding:90px 0; background:var(--bg-dark); }
-.home-equipe__grid { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; }
-.home-equipe__card { background:var(--bg-card); border:1px solid rgba(107,104,152,.18); border-radius:17px; padding:24px 18px; text-align:center; transition:all .32s; backdrop-filter:blur(8px); }
-.home-equipe__card:hover { border-color:rgba(155,143,255,.32); transform:translateY(-5px); box-shadow:0 14px 36px rgba(0,0,0,.4); }
-.home-equipe__avatar { width:66px; height:66px; border-radius:50%; background:linear-gradient(135deg,rgba(107,104,152,.38),rgba(155,143,255,.18)); border:2px solid rgba(107,104,152,.35); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:1.7rem; }
-.home-equipe__name { font-weight:700; font-size:.9rem; color:#F4F6F8; margin-bottom:5px; }
-.home-equipe__role { font-size:.7rem; color:#9B8FFF; letter-spacing:.07em; text-transform:uppercase; margin-bottom:8px; }
-.home-equipe__school { font-size:.67rem; color:rgba(239,238,234,.38); }
+/* ════════ FAQ ════════ */
+.home-faq { padding:96px 0; background:var(--bg-dark); }
+.home-faq__layout { display:grid; grid-template-columns:340px 1fr; gap:72px; align-items:flex-start; }
+.home-faq__side-label { font-size:.68rem; color:#9B8FFF; letter-spacing:.16em; text-transform:uppercase; font-family:'Anonymous Pro',monospace; margin-bottom:14px; display:block; }
+.home-faq__side-title { font-size:clamp(1.8rem,3.5vw,2.4rem); font-weight:800; line-height:1.1; margin-bottom:16px; letter-spacing:-.02em; }
+.home-faq__side-sub { font-size:.93rem; color:rgba(239,238,234,.55); line-height:1.78; margin-bottom:32px; font-weight:400; }
+.home-faq__side-cta { display:flex; flex-direction:column; gap:10px; }
+.home-faq__contact {
+  display:flex; align-items:center; gap:12px;
+  background:rgba(107,104,152,.1); border:1px solid rgba(107,104,152,.18);
+  border-radius:14px; padding:14px 16px; transition:border-color .25s; text-decoration:none;
+}
+.home-faq__contact:hover { border-color:rgba(155,143,255,.38); background:rgba(155,143,255,.07); }
+.home-faq__contact-icon { font-size:1.4rem; flex-shrink:0; }
+.home-faq__contact-title { font-weight:700; font-size:.85rem; color:#F4F6F8; margin-bottom:2px; }
+.home-faq__contact-sub { font-size:.72rem; color:rgba(239,238,234,.4); }
 
-/* responsive */
-@media (max-width: 900px) {
+/* Accordion FAQ */
+.home-faq__list { display:flex; flex-direction:column; gap:8px; }
+.faq-item {
+  background:rgba(30,28,56,.8);
+  border:1px solid rgba(107,104,152,.16);
+  border-radius:16px; overflow:hidden;
+  transition:border-color .28s, box-shadow .28s;
+}
+.faq-item--open { border-color:rgba(155,143,255,.3); box-shadow:0 6px 28px rgba(0,0,0,.25); }
+.faq-item__btn {
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:14px;
+  padding:18px 20px; background:none; border:none; cursor:pointer; text-align:left; transition:background .22s;
+}
+.faq-item__btn:hover { background:rgba(107,104,152,.1); }
+.faq-item--open .faq-item__btn { background:rgba(107,104,152,.1); }
+.faq-item__q { font-family:'Poppins',sans-serif; font-weight:600; font-size:.9rem; color:#F4F6F8; line-height:1.4; flex:1; }
+.faq-item__icon {
+  width:26px; height:26px; border-radius:50%;
+  background:rgba(107,104,152,.2); border:1px solid rgba(107,104,152,.3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.8rem; color:rgba(239,238,234,.55); flex-shrink:0;
+  transition:all .28s;
+}
+.faq-item--open .faq-item__icon { background:rgba(155,143,255,.18); border-color:rgba(155,143,255,.4); color:#9B8FFF; transform:rotate(45deg); }
+.faq-item__body { max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(0,1,.2,1),padding .3s; padding:0 20px; }
+.faq-item--open .faq-item__body { max-height:320px; padding-bottom:18px; }
+.faq-item__a { font-size:.875rem; color:rgba(239,238,234,.65); line-height:1.78; border-top:1px solid rgba(107,104,152,.14); padding-top:14px; font-weight:400; }
+.faq-item__tag { display:inline-block; background:rgba(155,143,255,.1); border-radius:100px; padding:2px 10px; font-size:.6rem; color:#9B8FFF; letter-spacing:.08em; text-transform:uppercase; margin-bottom:10px; font-weight:600; }
+
+/* ════════ EQUIPE — cards hover glow ════════ */
+.home-equipe { padding:90px 0; background:var(--bg-deep); }
+.home-equipe__grid { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; }
+.equipe-card {
+  background: rgb(26,24,50);
+  border: 1px solid rgba(107,104,152,.15);
+  border-radius: 18px; padding: 28px 18px;
+  text-align: center; cursor: default;
+  transition: all .35s;
+  position: relative; overflow: hidden;
+}
+.equipe-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 120%, rgba(155,143,255,.14) 0%, transparent 65%);
+  opacity: 0; transition: opacity .35s;
+}
+.equipe-card:hover {
+  border-color: rgba(155,143,255,.32);
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0,0,0,.45);
+}
+.equipe-card:hover::before { opacity: 1; }
+.equipe-card__avatar {
+  width: 70px; height: 70px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(107,104,152,.3), rgba(155,143,255,.15));
+  border: 2px solid rgba(107,104,152,.28);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px; font-size: 1.9rem;
+  transition: all .35s; position: relative; z-index: 1;
+}
+.equipe-card:hover .equipe-card__avatar {
+  border-color: rgba(155,143,255,.55);
+  box-shadow: 0 0 20px rgba(155,143,255,.22);
+  transform: scale(1.07);
+}
+.equipe-card__name { font-weight:700; font-size:.9rem; color:#F4F6F8; margin-bottom:5px; position:relative; z-index:1; }
+.equipe-card__role { font-size:.66rem; color:#9B8FFF; letter-spacing:.09em; text-transform:uppercase; font-weight:600; margin-bottom:8px; position:relative; z-index:1; }
+.equipe-card__school { font-size:.63rem; color:rgba(239,238,234,.3); font-family:'Anonymous Pro',monospace; position:relative; z-index:1; }
+
+/* Responsive */
+@media (max-width:960px) {
   .home-hero__inner { grid-template-columns:1fr; gap:36px; text-align:center; }
   .home-hero__desc { max-width:100%; margin-inline:auto; }
   .home-hero__actions { justify-content:center; }
-  .home-hero__stats { justify-content:center; }
   .home-hero__visual { display:none; }
   .home-dores__grid { grid-template-columns:1fr 1fr; }
-  .home-sol__inner { grid-template-columns:1fr; gap:40px; }
+  .home-sol__inner { grid-template-columns:1fr; gap:44px; }
   .home-sol__nira { display:none; }
   .home-pub__grid { grid-template-columns:1fr; }
+  .home-faq__layout { grid-template-columns:1fr; gap:40px; }
   .home-equipe__grid { grid-template-columns:repeat(3,1fr); }
 }
-@media (max-width: 540px) {
-  .home-dores__grid { grid-template-columns:1fr; }
+@media (max-width:560px) {
+  .home-dores__grid { grid-template-columns:1fr 1fr; }
   .home-equipe__grid { grid-template-columns:1fr 1fr; }
 }
 `;
 
 const dores = [
-  { icon:'🔇', titulo:'O Silêncio',            texto:'Medo de represália, vergonha e dependência do agressor tornam o silêncio uma armadilha, não uma escolha.' },
-  { icon:'🚪', titulo:'Falta de Acesso',        texto:'Ir a uma delegacia ou psicólogo presencialmente é impossível para quem vive sob vigilância constante.' },
-  { icon:'⚡', titulo:'Sem Resposta Rápida',    texto:'Em momentos de agressão, ligar e falar ao telefone não é uma opção. É preciso socorro silencioso.' },
-  { icon:'💔', titulo:'Ausência de Acolhimento',texto:'Antes da denúncia, existe a necessidade de ser ouvida. Sem julgamento, sem burocracia, sem se expor.' },
+  { icon:'🔇', titulo:'O Silêncio',             texto:'Medo de represália, vergonha e dependência tornam o silêncio uma armadilha, não uma escolha.', orb:'rgba(155,143,255,.22)' },
+  { icon:'🚪', titulo:'Falta de Acesso',         texto:'Ir a uma delegacia presencialmente é impossível para quem vive sob vigilância constante.', orb:'rgba(255,200,0,.18)' },
+  { icon:'⚡', titulo:'Sem Resposta Rápida',     texto:'Em momentos de crise, ligar ao telefone não é uma opção. É preciso socorro silencioso.', orb:'rgba(255,71,87,.18)' },
+  { icon:'💔', titulo:'Ausência de Acolhimento', texto:'Antes da denúncia, existe a necessidade de ser ouvida — sem julgamento, sem burocracia.', orb:'rgba(46,213,115,.16)' },
 ];
 
 const solucoes = [
-  { icon:'🦉', titulo:'Celular como ferramenta de defesa',       texto:'O celular já na mão da vítima vira proteção silenciosa — sem que ninguém ao redor perceba.' },
-  { icon:'🔒', titulo:'Canal 100% anônimo',                      texto:'Nenhuma identificação necessária. Elimina o medo inicial de julgamento ou exposição.' },
-  { icon:'🆘', titulo:'S.O.S. — um toque, GPS em tempo real',    texto:'Um único toque envia localização para a rede de apoio. Sem falar, digitar ou explicar.' },
-  { icon:'🤝', titulo:'Acolhimento e encaminhamento integrados', texto:'Suporte emocional, conteúdo informativo e direcionamento para serviços próximos.' },
+  { icon:'🦉', titulo:'Celular como ferramenta de defesa',       texto:'Interface discreta que vira proteção silenciosa sem chamar atenção.' },
+  { icon:'🔒', titulo:'Canal 100% anônimo',                      texto:'Nenhuma identificação necessária. Elimina o medo inicial de julgamento.' },
+  { icon:'🆘', titulo:'S.O.S. — um toque, GPS em tempo real',    texto:'Um único toque envia localização para a rede de apoio. Sem falar nada.' },
+  { icon:'🤝', titulo:'Acolhimento e encaminhamento integrados', texto:'Suporte emocional e direcionamento para serviços próximos.' },
+];
+
+const FAQ_ITEMS = [
+  { tag:'Privacidade', q:'A NIRA é realmente anônima? Meus dados ficam salvos?', a:'Sim. A NIRA foi desenhada com anonimato desde o início. Nenhum dado pessoal como nome, CPF ou telefone é solicitado. As conversas são temporárias e não associadas a qualquer identidade.' },
+  { tag:'Segurança',   q:'E se o meu agressor pegar meu celular e ver o site?',  a:'A NIRA possui um botão de saída rápida que fecha o aplicativo instantaneamente. Recomendamos acessar pelo modo de navegação privada (aba anônima) para não deixar histórico.' },
+  { tag:'S.O.S.',      q:'Como funciona o botão S.O.S.?',                        a:'Com um único toque, o S.O.S. envia sua localização em tempo real para a equipe NIRA e rede de apoio cadastrada. Não é necessário digitar nada ou falar. Em produção, integra diretamente com agentes da região.' },
+  { tag:'Atendimento', q:'Posso conversar com uma pessoa real, ou é só a IA?',   a:'A PsiTech (nossa IA) faz a triagem inicial, mas você pode solicitar conexão com uma atendente humana — psicóloga ou assistente social — que responde no mesmo chat, de forma segura e confidencial.' },
+  { tag:'Acesso',      q:'Preciso criar uma conta para usar a plataforma?',      a:'Não! Qualquer pessoa usa a triagem, o chat com a IA e os conteúdos sem criar conta. Cadastros existem apenas para profissionais da equipe interna.' },
+  { tag:'Emergência',  q:'O que fazer se estiver em perigo imediato agora?',     a:'Ative o botão S.O.S. dentro da plataforma ou ligue 190 (Polícia) ou 180 (Central da Mulher, 24h). O SAMU pode ser acionado pelo 192.' },
+  { tag:'Suporte',     q:'A NIRA atende apenas mulheres?',                       a:'A plataforma tem foco em violência doméstica e de gênero, mas qualquer pessoa em situação de vulnerabilidade pode buscar apoio. Conteúdos e triagem são inclusivos.' },
+  { tag:'Projeto',     q:'A NIRA é um projeto escolar ou está em produção?',     a:'É um projeto acadêmico da equipe E.Y.E (Ethical Youth Engineers) do SESI-SENAI — 2026 — com objetivo de evoluir para uma plataforma real de impacto social.' },
 ];
 
 const equipe = [
-  { nome:'Giovanna', papel:'UX / Design',       emoji:'🎨' },
-  { nome:'Samuel',   papel:'Backend / PHP',     emoji:'⚙️' },
-  { nome:'Kauã',     papel:'Frontend / React',  emoji:'💻' },
-  { nome:'Pietro',   papel:'Full Stack',         emoji:'🔧' },
-  { nome:'Lucas',    papel:'QA / Docs',          emoji:'📋' },
+  { nome:'Giovanna', papel:'UX / Design',      emoji:'🎨' },
+  { nome:'Samuel',   papel:'Backend / PHP',    emoji:'⚙️' },
+  { nome:'Kauã',     papel:'Frontend / React', emoji:'💻' },
+  { nome:'Pietro',   papel:'Full Stack',        emoji:'🔧' },
+  { nome:'Lucas',    papel:'QA / Docs',         emoji:'📋' },
 ];
+
+function FaqItem({ item }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={`faq-item${open ? ' faq-item--open' : ''}`}>
+      <button className="faq-item__btn" onClick={() => setOpen(v => !v)}>
+        <span className="faq-item__q">{item.q}</span>
+        <span className="faq-item__icon">+</span>
+      </button>
+      <div className="faq-item__body">
+        <div className="faq-item__a">
+          <span className="faq-item__tag">{item.tag}</span><br />{item.a}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -235,20 +348,14 @@ export default function HomePage() {
               <Link to="/como-funciona" className="btn btn-outline btn-lg">Como Funciona</Link>
             </div>
             <div className="home-hero__stats">
-              <div><span className="home-hero__stat-num">1/4</span><span className="home-hero__stat-lbl">Casos denunciados</span></div>
-              <div className="home-hero__divider" />
-              <div><span className="home-hero__stat-num">4min</span><span className="home-hero__stat-lbl">1 vítima a cada</span></div>
-              <div className="home-hero__divider" />
-              <div><span className="home-hero__stat-num">70%</span><span className="home-hero__stat-lbl">Sem registro prévio</span></div>
+              <div className="home-hero__stat"><span className="home-hero__stat-num">1/4</span><span className="home-hero__stat-lbl">Casos denunciados</span></div>
+              <div className="home-hero__stat"><span className="home-hero__stat-num">4min</span><span className="home-hero__stat-lbl">1 vítima a cada</span></div>
+              <div className="home-hero__stat"><span className="home-hero__stat-num">70%</span><span className="home-hero__stat-lbl">Sem registro prévio</span></div>
             </div>
           </div>
           <div className="home-hero__visual">
-            <div className="home-hero__ring home-hero__ring1" />
-            <div className="home-hero__ring home-hero__ring2" />
-            <div className="home-hero__owl-circle">
-              {/* Substitua por <img src="/images/owl.png" alt="NIRA" /> quando tiver a imagem */}
-              <span className="home-hero__owl">🦉</span>
-            </div>
+            <div className="home-hero__ring home-hero__ring1" /><div className="home-hero__ring home-hero__ring2" />
+            <div className="home-hero__owl-circle"><span className="home-hero__owl">🦉</span></div>
             <div className="home-hero__fcard home-hero__fcard1"><span className="home-hero__fcard-icon">🔒</span><div><p className="home-hero__fcard-title">100% Anônimo</p><p className="home-hero__fcard-sub">Sem identificação</p></div></div>
             <div className="home-hero__fcard home-hero__fcard2"><span className="home-hero__fcard-icon">🆘</span><div><p className="home-hero__fcard-title">Botão S.O.S.</p><p className="home-hero__fcard-sub">Alerta + GPS</p></div></div>
             <div className="home-hero__fcard home-hero__fcard3"><span className="home-hero__fcard-icon">🤝</span><div><p className="home-hero__fcard-title">Rede de Apoio</p><p className="home-hero__fcard-sub">Psicólogos · ONGs</p></div></div>
@@ -256,20 +363,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── DORES ── */}
+      {/* ══ DORES — nova animação ══ */}
       <section className="home-dores">
         <div className="container">
           <div style={{ textAlign:'center', marginBottom:'52px' }}>
             <span className="section-label">Problemática</span>
             <h2 className="section-title">Qual a Dor que nos Move?</h2>
-            <p className="section-sub" style={{ margin:'0 auto' }}>Muitas pessoas em vulnerabilidade enfrentam barreiras enormes para pedir ajuda.</p>
+            <p className="section-sub" style={{ margin:'0 auto' }}>Passe o mouse para entender cada barreira que enfrentamos.</p>
           </div>
           <div className="home-dores__grid">
             {dores.map(d => (
-              <div className="home-dores__card" key={d.titulo}>
-                <span className="home-dores__icon">{d.icon}</span>
-                <h3 className="home-dores__ctitle">{d.titulo}</h3>
-                <p className="home-dores__ctext">{d.texto}</p>
+              <div className="dore-card" key={d.titulo} style={{ '--orb-color': d.orb }}>
+                <div className="dore-card__orb" />
+                <div className="dore-card__icon-wrap">
+                  <span className="dore-card__icon">{d.icon}</span>
+                </div>
+                <p className="dore-card__title">{d.titulo}</p>
+                <p className="dore-card__text">{d.texto}</p>
+                <div className="dore-card" style={{ display:'none' }} />
               </div>
             ))}
           </div>
@@ -293,7 +404,7 @@ export default function HomePage() {
             <div>
               <span className="section-label">Nossa Solução</span>
               <h2 className="section-title">A Solução que<br />Faz a Diferença</h2>
-              <p className="section-sub" style={{ marginBottom:32 }}>Uma plataforma digital que reduz as barreiras para a denúncia, oferecendo ambiente seguro, acessível e anônimo.</p>
+              <p className="section-sub" style={{ marginBottom:32 }}>Uma plataforma digital que reduz as barreiras para a denúncia, acessível e anônima.</p>
               <div className="home-sol__items">
                 {solucoes.map(s => (
                   <div className="home-sol__item" key={s.titulo}>
@@ -308,11 +419,7 @@ export default function HomePage() {
               <span className="home-sol__nira-owl">🦉</span>
               <div className="home-sol__nira-name">NIRA</div>
               <div className="home-sol__nira-full">Núcleo de Identificação<br />e Resposta ao Abuso</div>
-              <div className="home-sol__badges">
-                <span className="home-sol__badge">GovTech</span>
-                <span className="home-sol__badge">SocialTech</span>
-                <span className="home-sol__badge">E.Y.E 2026</span>
-              </div>
+              <div className="home-sol__badges"><span className="home-sol__badge">GovTech</span><span className="home-sol__badge">SocialTech</span><span className="home-sol__badge">E.Y.E 2026</span></div>
             </div>
           </div>
         </div>
@@ -329,7 +436,7 @@ export default function HomePage() {
             <div className="home-pub__card">
               <p className="home-pub__ctitle">👤 Usuários Finais</p>
               <div className="home-pub__list">
-                {['Mulheres em situação de violência ou risco','Pessoas em vulnerabilidade social','Quem precisa de ajuda mas teme se expor'].map(i => (
+                {['Mulheres em situação de violência ou risco','Pessoas em vulnerabilidade social','Quem precisa de ajuda mas teme se expor','Dependentes emocionais ou financeiros'].map(i => (
                   <div className="home-pub__item" key={i}><span className="home-pub__dot" />{i}</div>
                 ))}
               </div>
@@ -337,7 +444,7 @@ export default function HomePage() {
             <div className="home-pub__card">
               <p className="home-pub__ctitle">🤝 Gestores e Parceiros</p>
               <div className="home-pub__list">
-                {['Psicólogos e assistentes sociais','ONGs e centros de apoio','Autoridades e agentes de segurança'].map(i => (
+                {['Psicólogos e assistentes sociais','ONGs e centros de apoio','Autoridades e agentes de segurança','Secretarias municipais de assistência'].map(i => (
                   <div className="home-pub__item" key={i}><span className="home-pub__dot" />{i}</div>
                 ))}
               </div>
@@ -346,21 +453,51 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── EQUIPE ── */}
+      {/* ══ FAQ ══ */}
+      <section className="home-faq">
+        <div className="container">
+          <div className="home-faq__layout">
+            <div>
+              <span className="home-faq__side-label">// FAQ</span>
+              <h2 className="home-faq__side-title">Perguntas<br />Frequentes</h2>
+              <p className="home-faq__side-sub">Tire suas dúvidas sobre segurança, privacidade e como a NIRA funciona na prática.</p>
+              <div className="home-faq__side-cta">
+                <Link to="/triagem" className="home-faq__contact">
+                  <span className="home-faq__contact-icon">🆘</span>
+                  <div><p className="home-faq__contact-title">Precisa de ajuda agora?</p><p className="home-faq__contact-sub">Acesse a triagem anônima</p></div>
+                </Link>
+                <Link to="/conteudos" className="home-faq__contact">
+                  <span className="home-faq__contact-icon">📚</span>
+                  <div><p className="home-faq__contact-title">Ver conteúdos informativos</p><p className="home-faq__contact-sub">Artigos e guias das ONGs parceiras</p></div>
+                </Link>
+                <a href="tel:180" className="home-faq__contact">
+                  <span className="home-faq__contact-icon">📞</span>
+                  <div><p className="home-faq__contact-title">Ligue 180</p><p className="home-faq__contact-sub">Central da Mulher — 24 horas</p></div>
+                </a>
+              </div>
+            </div>
+            <div className="home-faq__list">
+              {FAQ_ITEMS.map((item, i) => <FaqItem key={i} item={item} />)}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ EQUIPE ══ */}
       <section className="home-equipe section">
         <div className="container">
           <div style={{ textAlign:'center', marginBottom:'48px' }}>
             <span className="section-label">Time</span>
             <h2 className="section-title">Equipe E.Y.E</h2>
-            <p className="section-sub" style={{ margin:'0 auto' }}>Ethical Youth Engineers — estudantes do 3º ano do SESI-SENAI apaixonados por tecnologia com propósito.</p>
+            <p className="section-sub" style={{ margin:'0 auto' }}>Ethical Youth Engineers — estudantes do 3º ano do SESI-SENAI.</p>
           </div>
           <div className="home-equipe__grid">
             {equipe.map(m => (
-              <div className="home-equipe__card" key={m.nome}>
-                <div className="home-equipe__avatar">{m.emoji}</div>
-                <p className="home-equipe__name">{m.nome}</p>
-                <p className="home-equipe__role">{m.papel}</p>
-                <p className="home-equipe__school">SESI-SENAI</p>
+              <div className="equipe-card" key={m.nome}>
+                <div className="equipe-card__avatar">{m.emoji}</div>
+                <p className="equipe-card__name">{m.nome}</p>
+                <p className="equipe-card__role">{m.papel}</p>
+                <p className="equipe-card__school">SESI-SENAI · 2026</p>
               </div>
             ))}
           </div>

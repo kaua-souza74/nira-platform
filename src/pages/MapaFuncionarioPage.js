@@ -1,230 +1,503 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Navbar from '../components/Navbar';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth, ESPECIALIDADES, ESPEC_MAPA } from '../contexts/AuthContext';
 
 const css = `
-.mapa-page { min-height:100vh; background:var(--bg-deep); padding:80px 0 60px; }
-.mapa-topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:14px; }
-.mapa-title { font-size:1.55rem; font-weight:700; color:#F4F6F8; }
-.mapa-sub { font-size:.82rem; color:rgba(239,238,234,.38); margin-top:2px; }
-/* Layout */
-.mapa-layout { display:grid; grid-template-columns:1fr 320px; gap:22px; align-items:flex-start; }
+.mapa-page { min-height:100vh; background:var(--bg-deep); padding-top:72px; }
+.mapa-layout {
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  height: calc(100vh - 72px);
+  overflow: hidden;
+}
 
-/* Mapa visual */
-.mapa-visual { background:var(--bg-card); border:1px solid rgba(107,104,152,.2); border-radius:18px; padding:24px; backdrop-filter:blur(8px); }
-.mapa-visual__title { font-weight:700; font-size:.9rem; color:#F4F6F8; margin-bottom:18px; }
-.mapa-svg-wrap { position:relative; }
-.mapa-svg { width:100%; height:360px; }
-/* Zonas do mapa */
-.mapa-zona { cursor:pointer; transition:all .25s; }
-.mapa-zona rect { rx:12; }
-.mapa-zona:hover rect { filter:brightness(1.3); }
-.mapa-zona--norte  { fill:rgba(155,143,255,.18); stroke:rgba(155,143,255,.4); }
-.mapa-zona--sul    { fill:rgba(46,213,115,.14);  stroke:rgba(46,213,255,.35); }
-.mapa-zona--leste  { fill:rgba(255,200,0,.12);   stroke:rgba(255,200,0,.35); }
-.mapa-zona--oeste  { fill:rgba(255,71,87,.1);    stroke:rgba(255,71,87,.3); }
-.mapa-zona--centro { fill:rgba(107,104,152,.22); stroke:rgba(107,104,152,.5); }
-.mapa-zona--selecionada rect { stroke-width:2 !important; filter:brightness(1.4); }
-.mapa-label { font-size:13px; font-weight:700; fill:#F4F6F8; text-anchor:middle; dominant-baseline:middle; pointer-events:none; }
-.mapa-sub-label { font-size:11px; fill:rgba(239,238,234,.5); text-anchor:middle; dominant-baseline:middle; pointer-events:none; }
+/* ── MAPA ── */
+.mapa-container { position: relative; }
+#nira-map { width:100%; height:100%; min-height:500px; background:#1a1830; }
 
-/* Sidebar info */
-.mapa-info { display:flex; flex-direction:column; gap:16px; }
-.mapa-zona-card { background:var(--bg-card); border:1px solid rgba(107,104,152,.18); border-radius:14px; padding:20px; backdrop-filter:blur(8px); transition:border-color .28s; }
-.mapa-zona-card--selecionada { border-color:rgba(155,143,255,.4); }
-.mapa-zona-card__header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-.mapa-zona-card__name { font-weight:700; font-size:.95rem; color:#F4F6F8; }
-.mapa-zona-card__count { font-size:.7rem; color:rgba(239,238,234,.4); }
-.mapa-agente { display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid rgba(107,104,152,.1); }
-.mapa-agente:first-child { border-top:none; padding-top:0; }
-.mapa-agente-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,rgba(107,104,152,.35),rgba(155,143,255,.18)); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
-.mapa-agente-name { font-size:.85rem; color:#F4F6F8; font-weight:700; }
-.mapa-agente-area { font-size:.72rem; color:rgba(239,238,234,.4); }
-.mapa-agente-status { margin-left:auto; }
-/* Minha area card (para funcionários) */
-.mapa-minha-area { background:rgba(155,143,255,.1); border:1.5px solid rgba(155,143,255,.3); border-radius:16px; padding:24px; text-align:center; }
-.mapa-minha-area-icon { font-size:3rem; margin-bottom:12px; display:block; animation:float 4s ease-in-out infinite; }
-.mapa-minha-area-title { font-weight:700; font-size:1.1rem; color:#F4F6F8; margin-bottom:6px; }
-.mapa-minha-area-sub { font-size:.875rem; color:rgba(239,238,234,.55); margin-bottom:18px; line-height:1.65; }
-/* Alocação (só ADM) */
-.mapa-aloc { background:var(--bg-card); border:1px solid rgba(107,104,152,.18); border-radius:14px; padding:20px; backdrop-filter:blur(8px); }
-.mapa-aloc__title { font-weight:700; font-size:.9rem; color:#F4F6F8; margin-bottom:16px; }
-@media (max-width:900px) { .mapa-layout { grid-template-columns:1fr; } }
+.leaflet-container { background:#12111F !important; font-family:'Poppins',sans-serif !important; }
+.leaflet-control-zoom a { background:rgba(20,18,40,.92) !important; backdrop-filter:blur(12px) !important; border-color:rgba(107,104,152,.35) !important; color:rgba(239,238,234,.7) !important; }
+.leaflet-control-zoom a:hover { background:rgba(107,104,152,.3) !important; color:#F4F6F8 !important; }
+.leaflet-control-attribution { background:rgba(18,17,31,.85) !important; color:rgba(239,238,234,.25) !important; font-size:10px !important; }
+.leaflet-control-attribution a { color:rgba(155,143,255,.6) !important; }
+.leaflet-popup-content-wrapper { background:rgba(20,18,40,.97) !important; border:1px solid rgba(107,104,152,.3) !important; border-radius:14px !important; box-shadow:0 8px 32px rgba(0,0,0,.6) !important; color:#F4F6F8 !important; padding:0 !important; }
+.leaflet-popup-tip { background:rgba(20,18,40,.97) !important; }
+.leaflet-popup-close-button { color:rgba(239,238,234,.5) !important; top:10px !important; right:10px !important; }
+.nira-popup { padding:14px 16px; min-width:190px; font-family:'Poppins',sans-serif; }
+.nira-popup__icon { font-size:1.3rem; margin-bottom:7px; display:block; }
+.nira-popup__title { font-weight:700; font-size:.88rem; color:#F4F6F8; margin-bottom:3px; }
+.nira-popup__type  { font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+.nira-popup__desc  { font-size:.77rem; color:rgba(239,238,234,.55); line-height:1.55; }
+.nira-popup--sos .nira-popup__title { color:#FF4757; }
+.nira-popup--sos .nira-popup__type  { color:#FF4757; }
+
+/* FABs */
+.mapa-fab-group { position:absolute; bottom:24px; left:24px; display:flex; gap:8px; z-index:999; flex-wrap:wrap; }
+.mapa-fab {
+  background:rgba(18,17,31,.9); backdrop-filter:blur(12px);
+  border:1px solid rgba(107,104,152,.28); border-radius:100px;
+  padding:9px 16px; font-family:'Poppins',sans-serif;
+  font-size:.76rem; font-weight:600; color:rgba(239,238,234,.72);
+  cursor:pointer; transition:all .22s; display:flex; align-items:center; gap:6px;
+}
+.mapa-fab:hover { border-color:rgba(155,143,255,.45); color:#F4F6F8; }
+.mapa-fab--active { background:rgba(155,143,255,.18); border-color:#9B8FFF; color:#C4BCFF; }
+
+/* Legenda */
+.mapa-legend {
+  position:absolute; top:16px; left:16px; z-index:999;
+  background:rgba(18,17,31,.9); backdrop-filter:blur(12px);
+  border:1px solid rgba(107,104,152,.22); border-radius:14px; padding:14px 16px; min-width:165px;
+}
+.mapa-legend__title { font-size:.6rem; color:rgba(239,238,234,.28); text-transform:uppercase; letter-spacing:.12em; font-family:'Anonymous Pro',monospace; margin-bottom:9px; }
+.mapa-legend__item { display:flex; align-items:center; gap:8px; font-size:.75rem; color:rgba(239,238,234,.6); margin-bottom:6px; }
+.mapa-legend__item:last-child { margin-bottom:0; }
+.mapa-legend__dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+
+/* ── SIDEBAR TABS ── */
+.mapa-sidebar {
+  background:rgba(20,18,42,.97);
+  border-left:1px solid rgba(107,104,152,.18);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+
+/* Tabs */
+.mapa-tabs { display:flex; border-bottom:1px solid rgba(107,104,152,.14); flex-shrink:0; }
+.mapa-tab {
+  flex:1; padding:13px 8px;
+  font-family:'Poppins',sans-serif; font-size:.72rem; font-weight:600;
+  color:rgba(239,238,234,.45); background:none; border:none; cursor:pointer;
+  border-bottom:2px solid transparent; transition:all .22s; white-space:nowrap;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+}
+.mapa-tab:hover { color:rgba(239,238,234,.75); }
+.mapa-tab--active { color:#9B8FFF; border-bottom-color:#9B8FFF; background:rgba(155,143,255,.05); }
+.mapa-tab__badge {
+  background:rgba(155,143,255,.2); border-radius:100px;
+  padding:1px 6px; font-size:.6rem; color:#9B8FFF;
+}
+.mapa-tab__badge--red { background:rgba(255,71,87,.2); color:#FF4757; }
+
+.mapa-sidebar__body { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:12px; }
+.mapa-sidebar__body::-webkit-scrollbar { width:3px; }
+.mapa-sidebar__body::-webkit-scrollbar-thumb { background:rgba(107,104,152,.22); border-radius:3px; }
+
+.mapa-sect-lbl { font-size:.6rem; color:rgba(239,238,234,.28); text-transform:uppercase; letter-spacing:.12em; font-family:'Anonymous Pro',monospace; display:block; margin-bottom:7px; }
+
+/* SOS */
+.mapa-sos-alert { background:rgba(255,71,87,.1); border:1.5px solid rgba(255,71,87,.32); border-radius:12px; padding:13px 14px; animation:glowPulse 2.5s ease-in-out infinite; }
+.mapa-sos-alert__title { font-weight:700; font-size:.82rem; color:#FF4757; margin-bottom:3px; }
+.mapa-sos-alert__sub { font-size:.72rem; color:rgba(239,238,234,.5); line-height:1.5; margin-bottom:9px; }
+
+/* Zona pills */
+.mapa-zona-pill { display:flex; align-items:center; gap:9px; padding:9px 12px; background:rgba(107,104,152,.1); border:1px solid rgba(107,104,152,.15); border-radius:11px; cursor:pointer; transition:all .22s; margin-bottom:5px; }
+.mapa-zona-pill:hover { border-color:rgba(155,143,255,.35); }
+.mapa-zona-pill--sel { border-color:#9B8FFF; background:rgba(155,143,255,.12); }
+.mapa-zona-pill__dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.mapa-zona-pill__name { font-size:.83rem; font-weight:600; color:#F4F6F8; flex:1; }
+.mapa-zona-pill__cnt { font-size:.67rem; color:rgba(239,238,234,.35); font-family:'Anonymous Pro',monospace; }
+
+/* ── CARD DE FUNCIONÁRIO na tab ── */
+.func-card {
+  background:rgba(107,104,152,.08); border:1px solid rgba(107,104,152,.14);
+  border-radius:12px; padding:13px 14px; transition:border-color .22s;
+  position:relative;
+}
+.func-card:hover { border-color:rgba(155,143,255,.28); }
+.func-card__top { display:flex; align-items:center; gap:9px; margin-bottom:9px; }
+.func-card__av {
+  width:34px; height:34px; border-radius:50%;
+  background:linear-gradient(135deg,rgba(107,104,152,.3),rgba(155,143,255,.15));
+  display:flex; align-items:center; justify-content:center; font-size:.95rem; flex-shrink:0;
+}
+.func-card__name { font-weight:700; font-size:.85rem; color:#F4F6F8; margin-bottom:2px; }
+.func-card__espec { font-size:.65rem; color:rgba(239,238,234,.4); }
+.func-card__right { margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+
+/* Info de vínculo */
+.func-card__vinculo { font-size:.65rem; color:rgba(239,238,234,.38); margin-bottom:6px; display:flex; align-items:center; gap:5px; }
+
+/* Alocação inline */
+.func-card__aloc { display:flex; gap:7px; align-items:center; flex-wrap:wrap; }
+.func-card__zone-select { flex:1; min-width:100px; background:rgba(107,104,152,.12); border:1px solid rgba(107,104,152,.22); border-radius:8px; padding:5px 10px; font-family:'Poppins',sans-serif; font-size:.75rem; color:#F4F6F8; cursor:pointer; }
+.func-card__zone-select:focus { outline:none; border-color:rgba(155,143,255,.4); }
+.func-card__zone-select option { background:rgb(26,24,48); }
+.func-card__aloc-btn { background:rgba(155,143,255,.18); border:1.5px solid rgba(155,143,255,.35); border-radius:8px; padding:5px 12px; font-family:'Poppins',sans-serif; font-size:.75rem; font-weight:700; color:#C4BCFF; cursor:pointer; transition:all .22s; white-space:nowrap; }
+.func-card__aloc-btn:hover { background:rgba(155,143,255,.28); border-color:#9B8FFF; color:#fff; }
+.func-card__aloc-btn:disabled { opacity:.38; cursor:not-allowed; }
+
+/* Ir no mapa */
+.mapa-ir-btn { width:100%; background:rgba(107,104,152,.12); border:1px solid rgba(107,104,152,.2); border-radius:8px; padding:6px; font-family:'Poppins',sans-serif; font-size:.72rem; font-weight:600; color:rgba(239,238,234,.6); cursor:pointer; transition:all .22s; display:flex; align-items:center; justify-content:center; gap:5px; }
+.mapa-ir-btn:hover { border-color:rgba(155,143,255,.4); color:#C4BCFF; }
+
+/* ── NOTIFICAÇÕES ── */
+.notif-empty { text-align:center; padding:36px 12px; color:rgba(239,238,234,.28); font-size:.82rem; }
+.notif-item {
+  background:rgba(107,104,152,.08); border:1px solid rgba(107,104,152,.14);
+  border-radius:12px; padding:13px 14px; cursor:pointer; transition:all .22s;
+}
+.notif-item--nova { border-color:rgba(155,143,255,.3); background:rgba(155,143,255,.07); }
+.notif-item:hover { border-color:rgba(155,143,255,.35); background:rgba(155,143,255,.1); }
+.notif-item__top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:5px; }
+.notif-item__title { font-weight:700; font-size:.82rem; color:#F4F6F8; }
+.notif-item__hora { font-size:.65rem; color:rgba(239,238,234,.28); font-family:'Anonymous Pro',monospace; flex-shrink:0; }
+.notif-item__text { font-size:.8rem; color:rgba(239,238,234,.6); line-height:1.6; }
+.notif-item__nova-badge { display:inline-block; width:7px; height:7px; border-radius:50%; background:#9B8FFF; box-shadow:0 0 6px rgba(155,143,255,.5); flex-shrink:0; margin-top:3px; }
+
+/* Feedback de alocação */
+.aloc-toast {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+  background:rgba(46,213,115,.15); border:1.5px solid rgba(46,213,115,.38);
+  border-radius:100px; padding:11px 24px;
+  font-family:'Poppins',sans-serif; font-size:.85rem; font-weight:600; color:#2ED573;
+  box-shadow:0 8px 28px rgba(0,0,0,.45); z-index:9999;
+  animation:fadeInUp .35s ease, fadeOut .4s 2.6s ease forwards;
+  white-space:nowrap;
+}
+@keyframes fadeOut { to { opacity:0; transform:translateX(-50%) translateY(10px); } }
+
+@media (max-width:900px) { .mapa-layout { grid-template-columns:1fr; } .mapa-sidebar { max-height:360px; } }
 `;
 
+/* ── Dados ── */
 const ZONAS = [
-  { key:'norte',  label:'Norte',  cor:'#9B8FFF', x:220, y:60,  w:200, h:110 },
-  { key:'sul',    label:'Sul',    cor:'#2ED573', x:220, y:230, w:200, h:110 },
-  { key:'leste',  label:'Leste',  cor:'#FFC800', x:380, y:145, w:160, h:110 },
-  { key:'oeste',  label:'Oeste',  cor:'#FF4757', x:60,  y:145, w:160, h:110 },
-  { key:'centro', label:'Centro', cor:'#8B88B8', x:220, y:145, w:160, h:85  },
+  { key:'norte',  label:'Norte',  color:'#9B8FFF', lat:-23.1100, lng:-45.8950 },
+  { key:'sul',    label:'Sul',    color:'#2ED573', lat:-23.2100, lng:-45.8750 },
+  { key:'leste',  label:'Leste',  color:'#FFC800', lat:-23.1700, lng:-45.8100 },
+  { key:'oeste',  label:'Oeste',  color:'#FF8C42', lat:-23.1700, lng:-45.9600 },
+  { key:'centro', label:'Centro', color:'#8B88B8', lat:-23.1788, lng:-45.8852 },
 ];
 
-const AGENTES_INIT = [
-  { id:3, nome:'Carlos Silva',  area:'Sul',   emoji:'👨', ativo:true  },
-  { id:4, nome:'Ana Pereira',   area:null,    emoji:'👩', ativo:false },
-  { id:5, nome:'Pedro Souza',   area:'Norte', emoji:'👨', ativo:true  },
-  { id:6, nome:'Maria Costa',   area:'Centro',emoji:'👩', ativo:true  },
+const SERVICOS = [
+  { id:'s1', tipo:'delegacia', nome:'DEAM — Delegacia da Mulher',      lat:-23.1800, lng:-45.8780, icon:'👮', cor:'#FFC800', desc:'Atende 24h.' },
+  { id:'s2', tipo:'cram',      nome:'CRAM — Centro de Ref. da Mulher', lat:-23.1650, lng:-45.8920, icon:'🏢', cor:'#9B8FFF', desc:'Orientação jurídica e psicológica.' },
+  { id:'s3', tipo:'ong',       nome:'ONG Vida Nova',                    lat:-23.1750, lng:-45.9050, icon:'🤝', cor:'#2ED573', desc:'Apoio emocional e encaminhamento.' },
+  { id:'s4', tipo:'abrigo',    nome:'Casa-Abrigo Municipal',            lat:-23.1550, lng:-45.8800, icon:'🏠', cor:'#9B8FFF', desc:'Abrigo seguro e sigiloso.' },
+  { id:'s5', tipo:'sos',       nome:'⚠️ Alerta S.O.S. #0041',          lat:-23.1900, lng:-45.8650, icon:'🆘', cor:'#FF4757', desc:'Localização recebida — atender.', urgente:true },
 ];
+
+function pinSVG(emoji, cor, urgente=false) {
+  const borda = urgente ? '#FF4757' : cor;
+  const pulso = urgente ? `<circle cx="20" cy="20" r="18" fill="none" stroke="#FF4757" stroke-width="2" opacity=".5"><animate attributeName="r" from="14" to="22" dur="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" from=".6" to="0" dur="1.5s" repeatCount="indefinite"/></circle>` : '';
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="40" height="52" viewBox="0 0 40 52">${pulso}<circle cx="20" cy="20" r="18" fill="${cor}28" stroke="${borda}" stroke-width="2"/><circle cx="20" cy="20" r="13" fill="${cor}" opacity=".92"/><text x="20" y="26" text-anchor="middle" font-size="13" font-family="Segoe UI Emoji,Apple Color Emoji,sans-serif">${emoji}</text><polygon points="20,48 14,30 26,30" fill="${borda}" opacity=".9"/></svg>`)}`;
+}
 
 export default function MapaFuncionarioPage() {
-  const { user } = useAuth();
-  const [zonaSel, setZonaSel]     = useState(null);
-  const [agentes, setAgentes]     = useState(AGENTES_INIT);
-  const [alocSel, setAlocSel]     = useState(null);
-  const [alocArea, setAlocArea]   = useState('');
+  const { user, getFuncionarios, alocarFuncionario, marcarNotifLida, getVinculoLabel, getNotifsNaoLidas } = useAuth();
+  const mapRef     = useRef(null);
+  const leafletMap = useRef(null);
+  const markersRef = useRef([]);
 
-  const isAdm = user?.role === 'adm';
-  const isFuncionario = user?.role === 'funcionario';
+  const [camada,     setCamada]     = useState('servicos');
+  const [zonasSel,   setZonasSel]   = useState([]);
+  const [tabAtiva,   setTabAtiva]   = useState('zonas');
+  const [alocZonas,  setAlocZonas]  = useState({});   // { funcId: zonaLabel }
+  const [leafletOk,  setLeafletOk]  = useState(false);
+  const [toast,      setToast]      = useState(null);
 
-  function alocar() {
-    if (!alocSel || !alocArea) return;
-    setAgentes(ags => ags.map(a => a.id===Number(alocSel) ? {...a, area:alocArea, ativo:true} : a));
-    alert(`Agente alocado para a área ${alocArea}!`);
-    setAlocSel(null);
-    setAlocArea('');
+  const isAdm      = user?.role === 'adm';
+  const isFuncMapa = ESPEC_MAPA.includes(user?.especialidade);
+  const funcionarios = getFuncionarios().filter(u => ESPEC_MAPA.includes(u.especialidade));
+  const notifsNL = getNotifsNaoLidas();
+
+  /* ── Carregar Leaflet ── */
+  useEffect(() => {
+    if (!document.getElementById('leaflet-css')) {
+      const link = document.createElement('link');
+      link.id = 'leaflet-css'; link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+    if (window.L) { setLeafletOk(true); return; }
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.async = true;
+    script.onload = () => setLeafletOk(true);
+    document.head.appendChild(script);
+  }, []);
+
+  /* ── Iniciar mapa ── */
+  useEffect(() => {
+    if (!leafletOk || leafletMap.current) return;
+    const L = window.L;
+    const map = L.map('nira-map', { center:[-23.1788,-45.8852], zoom:13 });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution:'© OpenStreetMap © CARTO', subdomains:'abcd', maxZoom:19,
+    }).addTo(map);
+    leafletMap.current = map;
+    renderMarkers(L, map, 'servicos');
+  // eslint-disable-next-line
+  }, [leafletOk]);
+
+  /* ── Atualizar markers ao mudar funcionários ── */
+  useEffect(() => {
+    if (leafletMap.current && window.L) {
+      renderMarkers(window.L, leafletMap.current, camada);
+    }
+  // eslint-disable-next-line
+  }, [funcionarios.map(f=>`${f.id}:${f.lat}:${f.lng}`).join(','), camada]);
+
+  function renderMarkers(L, map, tipoCamada) {
+    markersRef.current.forEach(m => map.removeLayer(m));
+    markersRef.current = [];
+
+    function addM(lat, lng, svgUrl, html) {
+      const icon = L.icon({ iconUrl:svgUrl, iconSize:[40,52], iconAnchor:[20,52], popupAnchor:[0,-54] });
+      const m = L.marker([lat,lng],{icon}).addTo(map).bindPopup(html, { maxWidth:240 });
+      markersRef.current.push(m);
+    }
+
+    if (tipoCamada === 'servicos' || tipoCamada === 'todos') {
+      SERVICOS.forEach(s => {
+        addM(s.lat, s.lng, pinSVG(s.icon, s.cor, s.urgente),
+          `<div class="nira-popup${s.urgente?' nira-popup--sos':''}"><span class="nira-popup__icon">${s.icon}</span><p class="nira-popup__title">${s.nome}</p><p class="nira-popup__type" style="color:${s.cor}">${s.tipo.toUpperCase()}</p><p class="nira-popup__desc">${s.desc}</p></div>`
+        );
+      });
+    }
+
+    if (tipoCamada === 'agentes' || tipoCamada === 'todos') {
+      funcionarios.filter(f => f.lat).forEach(f => {
+        const z = ZONAS.find(z => z.label === f.area);
+        const cor = z?.color || '#6B6898';
+        const esp = ESPECIALIDADES.find(e => e.value === f.especialidade);
+        addM(f.lat, f.lng, pinSVG(esp?.icon||'👤', cor),
+          `<div class="nira-popup"><span class="nira-popup__icon">${esp?.icon||'👤'}</span><p class="nira-popup__title">${f.nome}</p><p class="nira-popup__type" style="color:${cor}">${esp?.label || 'Agente'} · Zona ${f.area||'N/A'}</p><p class="nira-popup__desc">${f.ativo?'● Online':'○ Offline'}</p></div>`
+        );
+      });
+    }
   }
 
-  const agentesNaZona = (key) => agentes.filter(a => a.area === (key.charAt(0).toUpperCase()+key.slice(1)));
+  function trocarCamada(c) {
+    setCamada(c);
+    if (leafletMap.current && window.L) renderMarkers(window.L, leafletMap.current, c);
+  }
+
+  function irParaZona(zona) {
+    if (leafletMap.current) leafletMap.current.flyTo([zona.lat, zona.lng], 14, { duration:.8 });
+    setZonasSel(prev => prev.includes(zona.key) ? prev.filter(z=>z!==zona.key) : [...prev, zona.key]);
+  }
+
+  function irParaFunc(f) {
+    if (leafletMap.current && f.lat) leafletMap.current.flyTo([f.lat, f.lng], 15, { duration:.8 });
+  }
+
+  function handleAlocar(f) {
+    const zona = ZONAS.find(z => z.label === alocZonas[f.id]);
+    if (!zona) return;
+    const lat = zona.lat + (Math.random()-.5)*.025;
+    const lng = zona.lng + (Math.random()-.5)*.025;
+    alocarFuncionario(f.id, zona.label, lat, lng);
+    setAlocZonas(prev => ({ ...prev, [f.id]: '' }));
+    showToast(`📍 ${f.nome} alocado(a) na zona ${zona.label}!`);
+    if (leafletMap.current && window.L) {
+      setTimeout(() => {
+        renderMarkers(window.L, leafletMap.current, camada);
+        leafletMap.current.flyTo([lat, lng], 14, { duration:.8 });
+      }, 100);
+    }
+  }
+
+  function showToast(msg) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3100);
+  }
 
   return (
     <>
       <style>{css}</style>
       <Navbar />
       <div className="mapa-page">
-        <div className="container">
-          <div className="mapa-topbar">
-            <div>
-              <h1 className="mapa-title">🗺️ Mapa de Equipes</h1>
-              <p className="mapa-sub">
-                {isAdm ? 'Visualize e aloque funcionários nas áreas de cobertura.' : 'Visualize sua área de atuação e casos designados.'}
-              </p>
+        <div className="mapa-layout">
+
+          {/* ══ MAPA ══ */}
+          <div className="mapa-container">
+            <div id="nira-map" ref={mapRef} />
+
+            {/* Legenda */}
+            <div className="mapa-legend">
+              <p className="mapa-legend__title">Legenda</p>
+              {[
+                {cor:'#9B8FFF', txt:'Serviços de Apoio'},
+                {cor:'#2ED573', txt:'Agente Ativo'},
+                {cor:'#FFC800', txt:'Delegacia / CRAM'},
+                {cor:'#FF4757', txt:'Alerta S.O.S.', glow:true},
+              ].map(l=>(
+                <div className="mapa-legend__item" key={l.txt}>
+                  <span className="mapa-legend__dot" style={{background:l.cor,boxShadow:l.glow?`0 0 6px ${l.cor}`:undefined}}/>
+                  {l.txt}
+                </div>
+              ))}
             </div>
-            {isFuncionario && user?.area && (
-              <div className="badge"><span className="badge-dot" />Sua área: {user.area}</div>
-            )}
+
+            {/* FABs */}
+            <div className="mapa-fab-group">
+              {[{key:'servicos',label:'🏥 Serviços'},{key:'agentes',label:'👥 Agentes'},{key:'todos',label:'🔍 Tudo'}].map(f=>(
+                <button key={f.key} className={`mapa-fab${camada===f.key?' mapa-fab--active':''}`} onClick={()=>trocarCamada(f.key)}>
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Se funcionário sem área */}
-          {isFuncionario && !user?.area && (
-            <div style={{background:'rgba(255,200,0,.08)',border:'1px solid rgba(255,200,0,.28)',borderRadius:13,padding:'16px 20px',marginBottom:24,fontSize:'.9rem',color:'rgba(239,238,234,.7)',lineHeight:1.65}}>
-              ⚠️ <strong style={{color:'#FFC800'}}>Área não definida:</strong> Você ainda não foi alocado em nenhuma área. Aguarde o administrador definir sua área de atuação.
+          {/* ══ SIDEBAR ══ */}
+          <aside className="mapa-sidebar">
+            {/* Tabs */}
+            <div className="mapa-tabs">
+              <button className={`mapa-tab${tabAtiva==='zonas'?' mapa-tab--active':''}`} onClick={()=>setTabAtiva('zonas')}>
+                🗺️ Zonas
+              </button>
+              {isAdm && (
+                <button className={`mapa-tab${tabAtiva==='funcionarios'?' mapa-tab--active':''}`} onClick={()=>setTabAtiva('funcionarios')}>
+                  👥 Equipe <span className="mapa-tab__badge">{funcionarios.length}</span>
+                </button>
+              )}
+              <button className={`mapa-tab${tabAtiva==='notifs'?' mapa-tab--active':''}`} onClick={()=>setTabAtiva('notifs')}>
+                🔔 {notifsNL.length > 0 && <span className="mapa-tab__badge mapa-tab__badge--red">{notifsNL.length}</span>}
+              </button>
             </div>
-          )}
 
-          <div className="mapa-layout">
-            {/* MAPA SVG */}
-            <div className="mapa-visual">
-              <p className="mapa-visual__title">📍 Mapa das Áreas de Cobertura</p>
-              <div className="mapa-svg-wrap">
-                <svg className="mapa-svg" viewBox="0 0 640 370" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Fundo */}
-                  <rect width="640" height="370" fill="rgba(18,17,31,.6)" rx="12"/>
-                  {/* Grid decorativo */}
-                  {[...Array(8)].map((_,i)=><line key={i} x1={i*90} y1="0" x2={i*90} y2="370" stroke="rgba(107,104,152,.08)" strokeWidth="1"/>)}
-                  {[...Array(5)].map((_,i)=><line key={i} x1="0" y1={i*80} x2="640" y2={i*80} stroke="rgba(107,104,152,.08)" strokeWidth="1"/>)}
+            <div className="mapa-sidebar__body">
+
+              {/* ── Tab: Zonas ── */}
+              {tabAtiva === 'zonas' && (
+                <>
+                  {/* SOS */}
+                  <div>
+                    <span className="mapa-sect-lbl">⚠️ Alertas ativos</span>
+                    <div className="mapa-sos-alert">
+                      <p className="mapa-sos-alert__title">🆘 S.O.S. #0041</p>
+                      <p className="mapa-sos-alert__sub">São José dos Campos · há 3 min</p>
+                      <button className="mapa-ir-btn" onClick={()=>{if(leafletMap.current)leafletMap.current.flyTo([-23.19,-45.865],15,{duration:.8})}}>
+                        📍 Ver no mapa
+                      </button>
+                    </div>
+                  </div>
 
                   {/* Zonas */}
-                  {ZONAS.map(z => {
-                    const agNaZona = agentesNaZona(z.key);
-                    const isSel = zonaSel === z.key;
+                  <div>
+                    <span className="mapa-sect-lbl">Zonas de Cobertura</span>
+                    {ZONAS.map(z => {
+                      const n = funcionarios.filter(f=>f.area===z.label&&f.lat).length;
+                      return (
+                        <div key={z.key} className={`mapa-zona-pill${zonasSel.includes(z.key)?' mapa-zona-pill--sel':''}`} onClick={()=>irParaZona(z)}>
+                          <span className="mapa-zona-pill__dot" style={{background:z.color}}/>
+                          <span className="mapa-zona-pill__name">{z.label}</span>
+                          <span className="mapa-zona-pill__cnt">{n} agente{n!==1?'s':''}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Info do funcionário logado */}
+                  {isFuncMapa && (
+                    <div style={{background:'rgba(155,143,255,.1)',border:'1.5px solid rgba(155,143,255,.28)',borderRadius:13,padding:16,textAlign:'center'}}>
+                      <p style={{fontSize:'2rem',marginBottom:8}}>🦉</p>
+                      <p style={{fontWeight:700,fontSize:'.88rem',color:'#F4F6F8',marginBottom:5}}>Olá, {user?.nome}!</p>
+                      {user?.area
+                        ? <><p style={{fontSize:'.82rem',color:'rgba(239,238,234,.6)',marginBottom:10}}>Você está alocado(a) na zona <strong style={{color:'#9B8FFF'}}>{user.area}</strong>.</p>
+                            <button className="mapa-ir-btn" onClick={()=>{if(leafletMap.current&&user.lat)leafletMap.current.flyTo([user.lat,user.lng],15,{duration:.8})}}>📍 Ver minha posição</button></>
+                        : <p style={{fontSize:'.82rem',color:'rgba(239,238,234,.5)'}}>Aguardando alocação pelo administrador.</p>
+                      }
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* ── Tab: Funcionários (ADM) ── */}
+              {tabAtiva === 'funcionarios' && isAdm && (
+                <>
+                  <span className="mapa-sect-lbl">Policiais e Agentes ({funcionarios.length})</span>
+                  {funcionarios.map(f => {
+                    const z = ZONAS.find(z => z.label === f.area);
+                    const esp = ESPECIALIDADES.find(e => e.value === f.especialidade);
+                    const vinculoLabel = getVinculoLabel(f.vinculo, f.ongId);
                     return (
-                      <g key={z.key} className={`mapa-zona mapa-zona--${z.key}${isSel?' mapa-zona--selecionada':''}`} onClick={()=>setZonaSel(isSel?null:z.key)}>
-                        <rect x={z.x} y={z.y} width={z.w} height={z.h} rx="12" strokeWidth={isSel?2:1} />
-                        <text className="mapa-label" x={z.x+z.w/2} y={z.y+z.h/2-8}>{z.label}</text>
-                        <text className="mapa-sub-label" x={z.x+z.w/2} y={z.y+z.h/2+10}>{agNaZona.length} agente{agNaZona.length!==1?'s':''}</text>
-                        {agNaZona.map((a,i)=>(
-                          <circle key={a.id} cx={z.x+z.w/2-10+(i*22)} cy={z.y+z.h-22} r="8" fill={a.ativo?z.cor:'rgba(107,104,152,.4)'} stroke="rgba(18,17,31,.6)" strokeWidth="1.5"/>
-                        ))}
-                      </g>
+                      <div key={f.id} className="func-card">
+                        <div className="func-card__top">
+                          <div className="func-card__av">{esp?.icon || '👤'}</div>
+                          <div style={{flex:1,minWidth:0}}>
+                            <p className="func-card__name">{f.nome}</p>
+                            <p className="func-card__espec">{esp?.label}</p>
+                          </div>
+                          <div className="func-card__right">
+                            <span className={`adm-pill adm-pill--${f.ativo?'new':'done'}`} style={{fontSize:'.6rem'}}>{f.ativo?'● Ativo':'○ Inativo'}</span>
+                            {f.area && <span style={{fontSize:'.62rem',color:z?.color||'rgba(239,238,234,.35)'}}>{f.area}</span>}
+                          </div>
+                        </div>
+
+                        {/* Vínculo */}
+                        <div className="func-card__vinculo">
+                          {vinculoLabel}
+                        </div>
+
+                        {/* Alocação */}
+                        <div className="func-card__aloc">
+                          <select
+                            className="func-card__zone-select"
+                            value={alocZonas[f.id] || ''}
+                            onChange={e => setAlocZonas(prev => ({...prev, [f.id]: e.target.value}))}
+                          >
+                            <option value="">Alocar em...</option>
+                            {ZONAS.map(z => (
+                              <option key={z.key} value={z.label}>{z.label}</option>
+                            ))}
+                          </select>
+                          <button
+                            className="func-card__aloc-btn"
+                            disabled={!alocZonas[f.id]}
+                            onClick={() => handleAlocar(f)}
+                          >
+                            Alocar →
+                          </button>
+                        </div>
+
+                        {f.lat && (
+                          <button className="mapa-ir-btn" style={{marginTop:7}} onClick={() => irParaFunc(f)}>
+                            📍 Ver no mapa
+                          </button>
+                        )}
+                      </div>
                     );
                   })}
-                  {/* Legenda */}
-                  <text x="20" y="350" fill="rgba(239,238,234,.3)" fontSize="11">● Agente ativo  ○ Inativo  | Clique em uma área para detalhes</text>
-                </svg>
-              </div>
-            </div>
+                </>
+              )}
 
-            {/* SIDEBAR */}
-            <div className="mapa-info">
-              {/* Card zona selecionada */}
-              {zonaSel && (
-                <div className="mapa-zona-card mapa-zona-card--selecionada">
-                  <div className="mapa-zona-card__header">
-                    <p className="mapa-zona-card__name">📍 Zona {zonaSel.charAt(0).toUpperCase()+zonaSel.slice(1)}</p>
-                    <p className="mapa-zona-card__count">{agentesNaZona(zonaSel).length} agente(s)</p>
-                  </div>
-                  {agentesNaZona(zonaSel).length === 0 ? (
-                    <p style={{fontSize:'.82rem',color:'rgba(239,238,234,.35)'}}>Nenhum agente alocado nesta zona.</p>
+              {/* ── Tab: Notificações ── */}
+              {tabAtiva === 'notifs' && (
+                <>
+                  <span className="mapa-sect-lbl">
+                    Notificações {notifsNL.length > 0 && `(${notifsNL.length} novas)`}
+                  </span>
+                  {(!user?.notificacoes || user.notificacoes.length === 0) ? (
+                    <div className="notif-empty">
+                      <p style={{fontSize:'2rem',marginBottom:10}}>🔔</p>
+                      <p>Nenhuma notificação.</p>
+                      {isFuncMapa && <p style={{marginTop:8,fontSize:'.75rem'}}>Você receberá um aviso aqui quando for alocado(a) em uma zona.</p>}
+                    </div>
                   ) : (
-                    agentesNaZona(zonaSel).map(a => (
-                      <div className="mapa-agente" key={a.id}>
-                        <div className="mapa-agente-avatar">{a.emoji}</div>
-                        <div><p className="mapa-agente-name">{a.nome}</p><p className="mapa-agente-area">Área: {a.area}</p></div>
-                        <span className="mapa-agente-status">
-                          <span className={`adm-pill ${a.ativo?'adm-pill--new':'adm-pill--done'}`} style={{fontSize:'.62rem'}}>{a.ativo?'● Ativo':'○ Inativo'}</span>
-                        </span>
+                    user.notificacoes.map(n => (
+                      <div key={n.id} className={`notif-item${!n.lida?' notif-item--nova':''}`} onClick={() => marcarNotifLida(n.id)}>
+                        <div className="notif-item__top">
+                          <p className="notif-item__title">{n.titulo}</p>
+                          <div style={{display:'flex',alignItems:'center',gap:5,flexShrink:0}}>
+                            <span className="notif-item__hora">{n.data}</span>
+                            {!n.lida && <span className="notif-item__nova-badge"/>}
+                          </div>
+                        </div>
+                        <p className="notif-item__text">{n.texto}</p>
+                        {!n.lida && <p style={{fontSize:'.65rem',color:'rgba(155,143,255,.5)',marginTop:6,fontFamily:"'Anonymous Pro',monospace"}}>Clique para marcar como lida</p>}
                       </div>
                     ))
                   )}
-                </div>
+                </>
               )}
-
-              {/* Card minha área (funcionário) */}
-              {isFuncionario && (
-                <div className="mapa-minha-area">
-                  <span className="mapa-minha-area-icon">🦉</span>
-                  <p className="mapa-minha-area-title">Olá, {user?.nome}!</p>
-                  <p className="mapa-minha-area-sub">
-                    {user?.area
-                      ? `Você está alocado na zona ${user.area}. Atenda os casos designados para sua área pelo chat.`
-                      : 'Aguardando alocação pelo administrador.'}
-                  </p>
-                  {user?.area && <button className="btn btn-primary btn-sm" onClick={()=>alert('Abrindo casos da minha área...')}>Ver Meus Casos</button>}
-                </div>
-              )}
-
-              {/* Alocação (ADM) */}
-              {isAdm && (
-                <div className="mapa-aloc">
-                  <p className="mapa-aloc__title">⚙️ Alocar Funcionário</p>
-                  <div className="form-group">
-                    <label className="form-label">Funcionário</label>
-                    <select className="form-select" value={alocSel||''} onChange={e=>setAlocSel(e.target.value)}>
-                      <option value="">Selecionar...</option>
-                      {agentes.map(a=><option key={a.id} value={a.id}>{a.nome}</option>)}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Área</label>
-                    <select className="form-select" value={alocArea} onChange={e=>setAlocArea(e.target.value)}>
-                      <option value="">Selecionar zona...</option>
-                      {ZONAS.map(z=><option key={z.key} value={z.label}>{z.label}</option>)}
-                    </select>
-                  </div>
-                  <button className="btn btn-primary" style={{width:'100%',justifyContent:'center'}} disabled={!alocSel||!alocArea} onClick={alocar}>
-                    Alocar →
-                  </button>
-                </div>
-              )}
-
-              {/* Lista geral */}
-              <div className="mapa-zona-card">
-                <p className="mapa-zona-card__name" style={{marginBottom:12}}>Todos os Agentes</p>
-                {agentes.map(a=>(
-                  <div className="mapa-agente" key={a.id}>
-                    <div className="mapa-agente-avatar">{a.emoji}</div>
-                    <div><p className="mapa-agente-name">{a.nome}</p><p className="mapa-agente-area">{a.area||'Sem área'}</p></div>
-                    <span className="mapa-agente-status">
-                      <span className={`adm-pill ${a.ativo?'adm-pill--new':'adm-pill--done'}`} style={{fontSize:'.62rem'}}>{a.ativo?'● Ativo':'○ Inativo'}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
+
+      {/* Toast de alocação */}
+      {toast && <div className="aloc-toast">{toast}</div>}
     </>
   );
 }
