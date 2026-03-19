@@ -1,0 +1,78 @@
+/*
+  PATCHES — Correções de espaçamento e divisão da navbar
+  Importar DEPOIS do global.css
+*/
+
+/* ─── Fix divisão navbar ───
+   A navbar é um pill flutuante sobre a página.
+   As seções hero imediatamente abaixo precisam de
+   padding-top suficiente para o conteúdo não ficar
+   colado à navbar, e de um gradiente de fade
+   para não aparecer linha de contraste.
+*/
+
+/* Aumenta o padding-top padrão */
+.page-wrapper {
+  padding-top: calc(72px + 36px) !important;
+}
+
+/* Seções hero das páginas públicas */
+.cf-hero,
+.blog-hero,
+.sobre-hero {
+  padding-top: calc(72px + 52px) !important;
+  position: relative;
+}
+
+/* Fade sutil no topo dessas seções (elimina linha visual) */
+.cf-hero::before,
+.blog-hero::before,
+.sobre-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, rgba(18,17,31,.2) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Seção do Sobre (sb-hero): a divisão feia entre seções */
+.sb-hero {
+  padding-top: calc(72px + 48px) !important;
+  position: relative;
+}
+.sb-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, rgba(18,17,31,.25) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Transição suave entre seções do Sobre */
+.sb-manifesto {
+  position: relative;
+}
+.sb-manifesto::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(107,104,152,.25), transparent);
+}
+
+/* Fix divisão feia entre hero e manifesto */
+.sb-hero + .sb-manifesto {
+  background: linear-gradient(
+    to bottom,
+    rgba(26,24,48,1) 0%,
+    var(--bg-dark) 80px
+  );
+}
+
+/* Home hero: mesma coisa */
+.home-hero {
+  min-height: 100vh !important;
+}
