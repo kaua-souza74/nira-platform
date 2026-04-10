@@ -168,18 +168,7 @@ export default function LoginPage() {
             <strong>Não tem conta?</strong> Apenas administradores do sistema podem criar novos acessos. Entre em contato com seu administrador responsável.
           </div>
 
-          {/* Demo para apresentação */}
-          <div className="login-demo">
-            <p className="login-demo-title">🧪 Credenciais de demo</p>
-            <div className="login-demo-items">
-              {DEMO_USERS.map(u => (
-                <div key={u.usuario} className="login-demo-item" onClick={() => preencherDemo(u.usuario, u.senha)}>
-                  <span className={`login-demo-badge login-demo-badge--${u.badge}`}>{u.label}</span>
-                  <span className="login-demo-cred">{u.usuario} / {u.senha}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          
 
           <div className="login-footer">
             <Link to="/">← Voltar para o início</Link>
