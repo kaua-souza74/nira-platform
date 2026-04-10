@@ -443,7 +443,7 @@ export default function HomePage() {
         <div className="container">
           <div className="home-faq__layout">
             <div>
-              <span className="home-faq__side-label">// FAQ</span>
+              <span className="home-faq__side-label">{`// FAQ`}</span>
               <h2 className="home-faq__side-title">Perguntas<br />Frequentes</h2>
               <p className="home-faq__side-sub">Tire suas dúvidas sobre segurança, privacidade e como a NIRA funciona na prática.</p>
               <div className="home-faq__side-cta">

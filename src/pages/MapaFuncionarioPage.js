@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import { useAuth, ESPECIALIDADES, ESPEC_MAPA } from '../contexts/AuthContext';
 

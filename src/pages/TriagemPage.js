@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import {
@@ -801,10 +800,8 @@ export default function TriagemPage() {
   const [histAtivo, setHistAtivo] = useState(null);
   const [chatAtivo, setChatAtivo] = useState(false);
   const [messages,  setMessages]  = useState([]);
-  const [stepAtual, setStepAtual] = useState('start');
   const [digitando, setDigitando] = useState(false);
   const [inputVal,  setInputVal]  = useState('');
-  const [fimFluxo,  setFimFluxo]  = useState(false);
   const [riscoAtual,setRiscoAtual]= useState(null);
 
   const messagesEndRef = useRef(null);
@@ -817,8 +814,6 @@ export default function TriagemPage() {
   function iniciarChat(startMsg) {
     setChatAtivo(true);
     setMessages([]);
-    setStepAtual('start');
-    setFimFluxo(false);
     setRiscoAtual(null);
     const step = FLOW.find(f => f.id === 'start');
     setTimeout(() => {
@@ -839,7 +834,6 @@ export default function TriagemPage() {
     if (!proxStep) return;
 
     if (proxStep.risco) setRiscoAtual(proxStep.risco);
-    if (proxStep.final) setFimFluxo(true);
 
     setDigitando(true);
     setTimeout(() => {
@@ -853,7 +847,6 @@ export default function TriagemPage() {
         final: proxStep.final,
       };
       setMessages(prev => [...prev, iaMsg]);
-      setStepAtual(proxStep.id);
     }, 1000 + Math.random() * 600);
   }
 

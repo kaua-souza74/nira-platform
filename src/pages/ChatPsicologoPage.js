@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
 import {
   User, Brain, AlertTriangle, MessageSquare, CheckCircle,
-  ArrowUpRight, Save, Heart, Map, UserCheck, Send
+  ArrowUpRight, Save, Map, UserCheck, Send
 } from 'lucide-react';
 
 const css = `
@@ -470,11 +470,11 @@ export default function ChatPsicologoPage() {
   const [notas, setNotas]         = useState('');
   const messagesEndRef = useRef(null);
 
-  if (!user) return <Navigate to="/login" replace />;
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [casoAtivo, casos]);
+
+  if (!user) return <Navigate to="/login" replace />;
 
   const casosFiltrados = casos.filter(c => {
     if (filtro === 'sos')    return c.tipo === 'sos';
@@ -514,8 +514,6 @@ export default function ChatPsicologoPage() {
     setCasoAtivo({ ...caso, unread: 0 });
     setNotas('');
   }
-
-  const casoInfoView = casoAtivo || {};
 
   return (
     <>

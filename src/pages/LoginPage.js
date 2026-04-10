@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   Shield, AlertCircle, User, Lock, LogIn,
-  ShieldCheck, AlertTriangle, LayoutDashboard, Building2,
+  ShieldCheck, LayoutDashboard, Building2,
   Briefcase, Home, Info, BookOpen, Settings, ArrowRight,
   Eye, EyeOff
 } from 'lucide-react';
@@ -431,7 +431,7 @@ export default function LoginPage() {
                 )}
               </button>
 
-              <a href="#" className="login-forgot">Esqueceu a senha?</a>
+              <button type="button" className="login-forgot" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0' }}>Esqueceu a senha?</button>
             </form>
           </div>
 

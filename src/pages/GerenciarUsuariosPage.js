@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
-import { useAuth, ESPECIALIDADES, ESPEC_CHAT, ESPEC_MAPA, VINCULOS } from '../contexts/AuthContext';
+import { useAuth, ESPECIALIDADES, ESPEC_CHAT } from '../contexts/AuthContext';
 
 const css = `
 .gu-page { min-height:100vh; background:var(--bg-deep); padding:80px 0 60px; }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { useAuth, ESPECIALIDADES, ESPEC_CHAT, ESPEC_MAPA, VINCULOS } from '../contexts/AuthContext';
+import { useAuth, ESPECIALIDADES, ESPEC_CHAT, ESPEC_MAPA } from '../contexts/AuthContext';
 import {
   LayoutDashboard, AlertTriangle, BookOpen, Users, Map, MessageSquare,
   Shield, CheckCircle, FileText, Search, Pencil, Trash2, ArrowDownToLine,
@@ -579,7 +579,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (tabFromUrl && tabFromUrl !== tabAtiva) setTabAtiva(tabFromUrl);
-  }, [tabFromUrl]);
+  }, [tabFromUrl, tabAtiva]);
 
   function irParaTab(key) {
     setTabAtiva(key);

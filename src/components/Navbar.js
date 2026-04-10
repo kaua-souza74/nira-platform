@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, ESPEC_CHAT, ESPEC_MAPA } from '../contexts/AuthContext';
 import {
   LayoutDashboard, BookOpen, Users, Map, MessageSquare,
-  LogOut, ChevronDown, AlertTriangle, BrainCircuit,
+  LogOut, ChevronDown, BrainCircuit,
   Shield
 } from 'lucide-react';
 

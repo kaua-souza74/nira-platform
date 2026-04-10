@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import {
-  Search, BookOpen, Shield, Heart, Home, Lock, FileText,
-  AlertTriangle, Pencil, Users, Baby, X
+  Search, Shield, Heart, Lock,
+  AlertTriangle, Users, X
 } from 'lucide-react';
 
 const css = `
