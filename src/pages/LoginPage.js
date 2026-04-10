@@ -1,101 +1,265 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Navbar from '../components/Navbar';
 
 const css = `
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(107,104,152,.28) 0%, transparent 60%),
-              var(--bg-deep);
-  padding: 90px 20px 40px;
+/* ══════════════════════════════════════
+   LOGIN PAGE — dois painéis, coruja, tipo
+══════════════════════════════════════ */
+.login-page{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: radial-gradient(ellipse 90% 80% at 50% 0%, rgba(107,104,152,.22) 0%, transparent 55%),
+              radial-gradient(ellipse 60% 60% at 80% 80%, rgba(155,143,255,.1) 0%, transparent 50%),
+              #12111F;
+  padding:20px;
 }
-.login-box {
-  width: 100%;
-  max-width: 420px;
-  background: var(--bg-card);
-  border: 1px solid rgba(107,104,152,.22);
-  border-radius: 22px;
-  padding: 40px 36px;
-  backdrop-filter: blur(16px);
-  animation: fadeInUp .45s ease;
-}
-.login-header { text-align:center; margin-bottom:32px; }
-.login-owl { font-size:3.2rem; margin-bottom:12px; display:block; animation: float 4s ease-in-out infinite; }
-.login-title { font-size:1.6rem; font-weight:700; color:#F4F6F8; margin-bottom:6px; }
-.login-sub { font-size:.875rem; color:rgba(239,238,234,.5); line-height:1.6; }
-.login-error {
-  background: rgba(255,71,87,.1);
-  border: 1px solid rgba(255,71,87,.28);
-  border-radius:10px;
-  padding:12px 15px;
-  font-size:.85rem;
-  color:#FF4757;
-  margin-bottom:20px;
-  animation: fadeIn .2s ease;
-}
-.login-footer {
-  margin-top:24px;
-  padding-top:20px;
-  border-top:1px solid rgba(107,104,152,.18);
-  text-align:center;
-  font-size:.78rem;
-  color:rgba(239,238,234,.38);
-  line-height:1.7;
-}
-.login-footer a { color:rgba(155,143,255,.8); }
-.login-footer a:hover { color:#9B8FFF; }
-.login-notice {
-  background: rgba(107,104,152,.1);
-  border:1px solid rgba(107,104,152,.2);
-  border-radius:10px;
-  padding:14px;
-  margin-top:22px;
-  font-size:.78rem;
-  color:rgba(239,238,234,.45);
-  line-height:1.65;
-}
-.login-notice strong { color:rgba(239,238,234,.7); }
 
-/* Demo credentials */
-.login-demo { margin-top:20px; }
-.login-demo-title { font-size:.7rem; color:rgba(239,238,234,.3); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px; }
-.login-demo-items { display:flex; flex-direction:column; gap:7px; }
-.login-demo-item {
-  background:rgba(107,104,152,.1);
-  border:1px solid rgba(107,104,152,.15);
-  border-radius:8px;
-  padding:8px 12px;
-  display:flex; gap:10px; align-items:center;
-  cursor:pointer;
-  transition:border-color .25s;
+/* Container dos dois painéis */
+.login-container{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  max-width:860px;
+  width:100%;
+  background:rgba(24,22,46,.92);
+  border:1px solid rgba(107,104,152,.22);
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.6);
+  animation:fadeInUp .4s ease;
+  backdrop-filter:blur(16px);
 }
-.login-demo-item:hover { border-color:rgba(155,143,255,.35); }
-.login-demo-badge { font-size:.65rem; font-weight:700; letter-spacing:.1em; padding:2px 8px; border-radius:100px; }
-.login-demo-badge--adm  { background:rgba(155,143,255,.18); color:#9B8FFF; }
-.login-demo-badge--ong  { background:rgba(46,213,115,.14);  color:#2ED573; }
-.login-demo-badge--func { background:rgba(255,200,0,.14);   color:#FFC800; }
-.login-demo-cred { font-size:.75rem; color:rgba(239,238,234,.45); font-family:'Anonymous Pro',monospace; }
+
+/* ── Painel esquerdo: formulário ── */
+.login-form-panel{
+  padding:44px 40px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.login-form-panel::before{
+  /* linha de brilho no topo */
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(155,143,255,.35),transparent);
+  pointer-events:none;
+}
+.login-logo-row{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:32px;
+}
+.login-logo-owl{font-size:1.8rem;filter:drop-shadow(0 0 8px rgba(155,143,255,.5));}
+.login-logo-name{font-weight:800;font-size:1.5rem;letter-spacing:.14em;color:#F4F6F8;}
+.login-logo-sub{font-size:.58rem;color:rgba(239,238,234,.3);letter-spacing:.1em;text-transform:uppercase;font-family:'Anonymous Pro',monospace;margin-left:2px;}
+
+.login-title{font-weight:700;font-size:1.35rem;color:#F4F6F8;margin-bottom:5px;}
+.login-subtitle{font-size:.85rem;color:rgba(239,238,234,.45);margin-bottom:28px;line-height:1.6;}
+
+/* Input com ícone */
+.login-input-wrap{position:relative;margin-bottom:16px;}
+.login-input-icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  font-size:.9rem;pointer-events:none;
+  color:rgba(239,238,234,.3);
+}
+.login-input{
+  width:100%;
+  background:rgba(107,104,152,.1);
+  border:1.5px solid rgba(107,104,152,.22);
+  border-radius:12px;
+  padding:13px 16px 13px 40px;
+  font-family:'Poppins',sans-serif;
+  font-size:.9rem;color:#F4F6F8;
+  transition:border-color .28s,background .28s;
+}
+.login-input:focus{
+  outline:none;
+  border-color:rgba(155,143,255,.5);
+  background:rgba(107,104,152,.16);
+}
+.login-input::placeholder{color:rgba(239,238,234,.25);}
+
+/* Tipo de conta */
+.login-tipo-label{
+  font-size:.68rem;color:rgba(239,238,234,.4);
+  text-transform:uppercase;letter-spacing:.12em;
+  font-family:'Anonymous Pro',monospace;
+  margin-bottom:12px;display:block;
+}
+.login-tipo-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:24px;
+}
+.login-tipo-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;padding:11px 8px;
+  background:rgba(107,104,152,.1);
+  border:1.5px solid rgba(107,104,152,.2);
+  border-radius:12px;cursor:pointer;transition:all .22s;
+  font-family:'Poppins',sans-serif;
+}
+.login-tipo-btn:hover{border-color:rgba(155,143,255,.38);background:rgba(155,143,255,.08);}
+.login-tipo-btn--sel{border-color:#9B8FFF;background:rgba(155,143,255,.14);}
+.login-tipo-icon{font-size:1.3rem;}
+.login-tipo-name{font-size:.72rem;font-weight:600;color:rgba(239,238,234,.75);}
+.login-tipo-btn--sel .login-tipo-name{color:#C4BCFF;}
+
+/* Erro */
+.login-erro{
+  background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.28);
+  border-radius:10px;padding:11px 15px;font-size:.83rem;color:#FF4757;
+  margin-bottom:16px;animation:fadeIn .2s ease;
+}
+
+/* Botão principal */
+.login-btn{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,#7B6FE8,#9B8FFF);
+  color:#fff;font-family:'Poppins',sans-serif;font-weight:700;font-size:.92rem;
+  border:none;border-radius:14px;cursor:pointer;transition:all .28s;
+  box-shadow:0 6px 20px rgba(155,143,255,.35);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.login-btn:hover{background:linear-gradient(135deg,#9B8FFF,#B8AEFF);box-shadow:0 8px 28px rgba(155,143,255,.5);transform:translateY(-1px);}
+.login-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+
+.login-forgot{
+  display:block;text-align:center;margin-top:14px;
+  font-size:.78rem;color:rgba(239,238,234,.3);
+  text-decoration:underline;text-underline-offset:3px;
+  transition:color .2s;
+}
+.login-forgot:hover{color:rgba(239,238,234,.6);}
+
+/* Credenciais de demo */
+.login-demo{margin-top:22px;padding-top:18px;border-top:1px solid rgba(107,104,152,.14);}
+.login-demo-label{font-size:.65rem;color:rgba(239,238,234,.25);text-transform:uppercase;letter-spacing:.1em;font-family:'Anonymous Pro',monospace;margin-bottom:9px;display:block;}
+.login-demo-list{display:flex;flex-direction:column;gap:5px;}
+.login-demo-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 11px;
+  background:rgba(107,104,152,.08);border:1px solid rgba(107,104,152,.14);
+  border-radius:9px;cursor:pointer;transition:all .2s;
+}
+.login-demo-item:hover{border-color:rgba(155,143,255,.3);background:rgba(155,143,255,.07);}
+.login-demo-badge{font-size:.6rem;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:100px;flex-shrink:0;}
+.login-demo-badge--adm{background:rgba(155,143,255,.18);color:#9B8FFF;}
+.login-demo-badge--ong{background:rgba(46,213,115,.14);color:#2ED573;}
+.login-demo-badge--func{background:rgba(255,200,0,.14);color:#FFC800;}
+.login-demo-cred{font-size:.72rem;color:rgba(239,238,234,.42);font-family:'Anonymous Pro',monospace;}
+
+/* ── Painel direito: coruja + visual ── */
+.login-owl-panel{
+  background:linear-gradient(
+    145deg,
+    rgba(55,48,108,.85) 0%,
+    rgba(40,35,85,.9) 40%,
+    rgba(107,88,200,.4) 100%
+  );
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 32px;
+  position:relative;overflow:hidden;
+  border-left:1px solid rgba(107,104,152,.18);
+}
+/* Orb de fundo */
+.login-owl-panel::before{
+  content:'';
+  position:absolute;
+  top:-60px;right:-60px;
+  width:300px;height:300px;border-radius:50%;
+  background:rgba(155,143,255,.12);filter:blur(80px);
+  pointer-events:none;
+}
+.login-owl-panel::after{
+  content:'';
+  position:absolute;
+  bottom:-40px;left:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(107,104,152,.1);filter:blur(60px);
+  pointer-events:none;
+}
+
+/* Coruja */
+.login-owl-big{
+  font-size:7rem;
+  animation:float 4s ease-in-out infinite;
+  filter:drop-shadow(0 0 32px rgba(155,143,255,.55));
+  position:relative;z-index:1;
+  margin-bottom:24px;
+}
+
+/* Anel pulsante ao redor da coruja */
+.login-owl-ring{
+  position:absolute;
+  width:160px;height:160px;
+  border-radius:50%;
+  border:1.5px solid rgba(155,143,255,.2);
+  animation:pulseRing 2.5s ease-out infinite;
+}
+.login-owl-ring2{
+  width:210px;height:210px;
+  animation-delay:.8s;
+}
+
+.login-owl-title{
+  font-weight:800;font-size:1.8rem;letter-spacing:.14em;
+  color:#F4F6F8;margin-bottom:8px;position:relative;z-index:1;
+}
+.login-owl-sub{
+  font-size:.72rem;color:rgba(239,238,234,.38);
+  text-align:center;line-height:1.65;
+  font-family:'Anonymous Pro',monospace;
+  letter-spacing:.06em;position:relative;z-index:1;
+  max-width:200px;
+}
+
+/* Badges flutuantes */
+.login-float-badge{
+  position:absolute;
+  background:rgba(18,16,38,.85);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(107,104,152,.22);
+  border-radius:100px;padding:7px 14px;
+  display:flex;align-items:center;gap:7px;
+  font-size:.72rem;font-weight:600;
+  animation:fadeInUp .5s ease both;z-index:1;
+}
+.login-float-badge--1{top:22%;left:8%;animation-delay:.3s;color:rgba(239,238,234,.75);}
+.login-float-badge--2{bottom:24%;right:5%;animation-delay:.5s;color:rgba(239,238,234,.75);}
+
+/* Responsive */
+@media(max-width:720px){
+  .login-container{grid-template-columns:1fr;}
+  .login-owl-panel{display:none;}
+}
+@media(max-width:480px){
+  .login-form-panel{padding:32px 24px;}
+  .login-tipo-grid{grid-template-columns:1fr 1fr;}
+}
 `;
 
 const DEMO_USERS = [
-  { badge:'adm',  label:'ADM',              usuario:'admin',        senha:'nira2026'  },
-  { badge:'ong',  label:'ONG Vida Nova',    usuario:'ong_vida',     senha:'ong123'    },
-  { badge:'ong',  label:'ONG Renascer',     usuario:'ong_renascer', senha:'ren123'    },
-  { badge:'func', label:'Psicóloga',        usuario:'psicologa01',  senha:'chat123'   },
-  { badge:'func', label:'Policial / Campo', usuario:'policial01',   senha:'mapa123'   },
-  { badge:'func', label:'Agente de Campo',  usuario:'agente01',    senha:'agente123' },
+  { badge:'adm',  label:'ADM',              usuario:'admin',        senha:'nira2026' },
+  { badge:'ong',  label:'ONG Vida Nova',    usuario:'ong_vida',     senha:'ong123'   },
+  { badge:'ong',  label:'ONG Renascer',     usuario:'ong_renascer', senha:'ren123'   },
+  { badge:'func', label:'Psicóloga',        usuario:'psicologa01',  senha:'chat123'  },
+  { badge:'func', label:'Policial',         usuario:'policial01',   senha:'mapa123'  },
+  { badge:'func', label:'Agente',           usuario:'agente01',     senha:'agente123'},
 ];
 
 export default function LoginPage() {
-  const [usuario, setUsuario] = useState('');
-  const [senha, setSenha]     = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login, erro }       = useAuth();
-  const navigate              = useNavigate();
+  const [usuario,  setUsuario]  = useState('');
+  const [senha,    setSenha]    = useState('');
+  const [loading,  setLoading]  = useState(false);
+  const { login, erro } = useAuth();
+  const navigate = useNavigate();
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -103,77 +267,104 @@ export default function LoginPage() {
     setTimeout(() => {
       const result = login(usuario.trim(), senha);
       setLoading(false);
-      if (result.ok) {
-        // Redireciona para home — o botão na navbar já muda para o role
-        navigate('/');
-      }
+      if (result.ok) navigate('/');
     }, 600);
   }
 
-  function preencherDemo(u, s) {
-    setUsuario(u);
-    setSenha(s);
-  }
+  function preencherDemo(u, s) { setUsuario(u); setSenha(s); }
 
   return (
     <>
       <style>{css}</style>
-      <Navbar />
       <div className="login-page">
-        <div className="login-box">
-          <div className="login-header">
-            <span className="login-owl">🦉</span>
-            <h1 className="login-title">Área Restrita</h1>
-            <p className="login-sub">Acesso exclusivo para equipe interna.<br />Somente administradores criam novos logins.</p>
+        <div className="login-container">
+
+          {/* ── Painel esquerdo: formulário ── */}
+          <div className="login-form-panel">
+            <div className="login-logo-row">
+              <span className="login-logo-owl">🦉</span>
+              <div>
+                <span className="login-logo-name">NIRA</span>
+                <br />
+                <span className="login-logo-sub">Área Restrita</span>
+              </div>
+            </div>
+
+            <h1 className="login-title">Bem-vindo de volta</h1>
+            <p className="login-subtitle">
+              Acesso exclusivo para equipe interna.<br />
+              Somente administradores criam novos acessos.
+            </p>
+
+            <form onSubmit={handleSubmit}>
+              {erro && <div className="login-erro">⚠️ {erro}</div>}
+
+              <div className="login-input-wrap">
+                <span className="login-input-icon">👤</span>
+                <input
+                  type="text"
+                  className="login-input"
+                  placeholder="Usuário"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
+                />
+              </div>
+
+              <div className="login-input-wrap">
+                <span className="login-input-icon">🔑</span>
+                <input
+                  type="password"
+                  className="login-input"
+                  placeholder="Senha"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                />
+              </div>
+
+              <button type="submit" className="login-btn" disabled={!usuario || !senha}>
+                🚀 Entrar
+              </button>
+
+              <a href="#" className="login-forgot">Esqueceu a senha?</a>
+
+              <div className="login-demo">
+                <span className="login-demo-label">Credenciais de Demo</span>
+                <div className="login-demo-list">
+                  {DEMO_USERS.map((item, i) => (
+                    <div
+                      key={i}
+                      className="login-demo-item"
+                      onClick={() => preencherDemo(item.usuario, item.senha)}
+                    >
+                      <span className={`login-demo-badge login-demo-badge--${item.badge}`}>
+                        {item.badge.toUpperCase()}
+                      </span>
+                      <span className="login-demo-cred">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </form>
           </div>
 
-          {erro && <div className="login-error">⚠️ {erro}</div>}
+          {/* ── Painel direito: coruja ── */}
+          <div className="login-owl-panel">
+            <div className="login-owl-ring" />
+            <div className="login-owl-ring login-owl-ring2" />
+            <span className="login-owl-big">🦉</span>
+            <p className="login-owl-title">NIRA</p>
+            <p className="login-owl-sub">
+              Núcleo de Identificação<br />e Resposta ao Abuso<br /><br />
+              E.Y.E · SESI-SENAI · 2026
+            </p>
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label className="form-label">Usuário</label>
-              <input
-                className="form-input"
-                type="text"
-                placeholder="seu.usuario"
-                value={usuario}
-                onChange={e => setUsuario(e.target.value)}
-                required
-                autoComplete="username"
-              />
+            {/* Badges flutuantes */}
+            <div className="login-float-badge login-float-badge--1">
+              <span>🔒</span> 100% Anônimo
             </div>
-            <div className="form-group">
-              <label className="form-label">Senha</label>
-              <input
-                className="form-input"
-                type="password"
-                placeholder="••••••••"
-                value={senha}
-                onChange={e => setSenha(e.target.value)}
-                required
-                autoComplete="current-password"
-              />
+            <div className="login-float-badge login-float-badge--2">
+              <span>🆘</span> S.O.S. em 1 toque
             </div>
-            <button
-              className="btn btn-primary"
-              type="submit"
-              disabled={loading}
-              style={{ width:'100%', justifyContent:'center', padding:'13px', marginTop:8, opacity: loading ? .7 : 1 }}
-            >
-              {loading ? '⏳ Verificando...' : 'Entrar →'}
-            </button>
-          </form>
-
-          <div className="login-notice">
-            <strong>Não tem conta?</strong> Apenas administradores do sistema podem criar novos acessos. Entre em contato com seu administrador responsável.
-          </div>
-
-          
-
-          <div className="login-footer">
-            <Link to="/">← Voltar para o início</Link>
-            <br />
-            Em caso de emergência: <a href="tel:180">180</a> · <a href="tel:190">190</a>
           </div>
         </div>
       </div>
