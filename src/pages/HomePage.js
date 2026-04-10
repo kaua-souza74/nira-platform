@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import {
+  AlertTriangle, ShieldCheck, Users, VolumeX, DoorClosed,
+  Zap, HeartCrack, Shield, BookOpen, Phone,
+  Palette, Settings, Code2, Layers, ClipboardCheck, User
+} from 'lucide-react';
 
 const css = `
 /* ════════ HERO ════════ */
@@ -27,8 +32,8 @@ const css = `
 .home-hero__stat-num { display:block; font-weight:800; font-size:1.7rem; color:#F4F6F8; line-height:1; margin-bottom:4px; }
 .home-hero__stat-lbl { font-size:.65rem; color:rgba(239,238,234,.42); text-transform:uppercase; letter-spacing:.06em; }
 .home-hero__visual { display:flex; align-items:center; justify-content:center; position:relative; animation:fadeIn .9s .3s ease both; }
-.home-hero__owl-circle { width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(107,104,152,.22) 0%,transparent 70%); border:1px solid rgba(107,104,152,.28); display:flex; align-items:center; justify-content:center; position:relative; animation:float 5s ease-in-out infinite; }
-.home-hero__owl { font-size:8rem; filter:drop-shadow(0 0 28px rgba(155,143,255,.45)); user-select:none; }
+.home-hero__icon-circle { width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(107,104,152,.22) 0%,transparent 70%); border:1px solid rgba(107,104,152,.28); display:flex; align-items:center; justify-content:center; position:relative; animation:float 5s ease-in-out infinite; }
+.home-hero__icon-circle svg { width:120px; height:120px; stroke:#9B8FFF; fill:none; stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 0 28px rgba(155,143,255,.45)); }
 .home-hero__ring { position:absolute; border-radius:50%; border:1px solid rgba(107,104,152,.15); animation:pulseRing 3s ease-out infinite; pointer-events:none; }
 .home-hero__ring1 { width:340px; height:340px; animation-delay:0s; }
 .home-hero__ring2 { width:400px; height:400px; animation-delay:.7s; }
@@ -36,15 +41,15 @@ const css = `
 .home-hero__fcard1 { top:6%; left:-12%; animation-delay:.5s; }
 .home-hero__fcard2 { bottom:15%; left:-10%; animation-delay:.7s; }
 .home-hero__fcard3 { top:10%; right:-10%; animation-delay:.9s; }
-.home-hero__fcard-icon { font-size:1.3rem; }
+.home-hero__fcard-icon { display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:8px; background:rgba(107,104,152,.18); flex-shrink:0; }
+.home-hero__fcard-icon svg { width:16px; height:16px; stroke:#9B8FFF; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.home-hero__fcard-icon--sos svg { stroke:#FF4757; }
 .home-hero__fcard-title { font-weight:700; font-size:.82rem; color:#F4F6F8; }
 .home-hero__fcard-sub { font-size:.68rem; color:rgba(239,238,234,.5); }
 
-/* ════════ CARDS DE DORES — nova animação ════════ */
+/* ════════ CARDS DE DORES ════════ */
 .home-dores { padding:90px 0; background:var(--bg-dark); }
 .home-dores__grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
-
-/* Card com reveal de conteúdo por baixo do ícone */
 .dore-card {
   position: relative;
   background: rgb(26, 24, 50);
@@ -62,8 +67,6 @@ const css = `
   box-shadow: 0 20px 48px rgba(0,0,0,.5);
   transform: translateY(-6px);
 }
-
-/* Orb de fundo — expande no hover */
 .dore-card__orb {
   position: absolute;
   width: 120px; height: 120px;
@@ -78,8 +81,6 @@ const css = `
   transform: translate(-50%,-50%) scale(2.5);
   opacity: 1;
 }
-
-/* Ícone — sobe no hover */
 .dore-card__icon-wrap {
   width: 68px; height: 68px;
   border-radius: 50%;
@@ -97,9 +98,9 @@ const css = `
   box-shadow: 0 0 24px rgba(155,143,255,.25);
   background: rgba(155,143,255,.12);
 }
-.dore-card__icon { font-size:1.8rem; line-height:1; position:relative; z-index:1; }
-
-/* Título — sempre visível */
+.dore-card__icon { display:flex; align-items:center; justify-content:center; position:relative; z-index:1; }
+.dore-card__icon svg { width:28px; height:28px; stroke:rgba(155,143,255,.65); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; transition:stroke .35s; }
+.dore-card:hover .dore-card__icon svg { stroke:#9B8FFF; }
 .dore-card__title {
   font-weight: 700; font-size: .9rem;
   color: rgba(239,238,234,.75);
@@ -108,28 +109,16 @@ const css = `
   position: relative; z-index: 1;
   transition: color .3s, transform .35s;
 }
-.dore-card:hover .dore-card__title {
-  color: #F4F6F8;
-  transform: translateY(-2px);
-}
-
-/* Texto — escondido, revela no hover */
+.dore-card:hover .dore-card__title { color: #F4F6F8; transform: translateY(-2px); }
 .dore-card__text {
   font-size: .83rem; color: rgba(239,238,234,.65);
   line-height: 1.7; text-align: center;
   position: relative; z-index: 1;
   max-height: 0; overflow: hidden;
-  opacity: 0;
-  margin-top: 0;
+  opacity: 0; margin-top: 0;
   transition: max-height .4s cubic-bezier(0,1,.3,1), opacity .35s .05s, margin-top .35s;
 }
-.dore-card:hover .dore-card__text {
-  max-height: 120px;
-  opacity: 1;
-  margin-top: 12px;
-}
-
-/* Linha brilhante no topo */
+.dore-card:hover .dore-card__text { max-height: 120px; opacity: 1; margin-top: 12px; }
 .dore-card::after {
   content: '';
   position: absolute; top: 0; left: 15%; right: 15%;
@@ -153,12 +142,14 @@ const css = `
 .home-sol__items { display:flex; flex-direction:column; gap:14px; margin-bottom:36px; }
 .home-sol__item { display:flex; align-items:flex-start; gap:14px; padding:16px 18px; background:rgba(107,104,152,.08); border:1px solid rgba(107,104,152,.15); border-radius:14px; transition:all .28s; }
 .home-sol__item:hover { border-color:rgba(155,143,255,.35); background:rgba(155,143,255,.07); }
-.home-sol__item-icon { font-size:1.5rem; flex-shrink:0; margin-top:2px; }
+.home-sol__item-icon { display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px; background:rgba(107,104,152,.15); border:1px solid rgba(107,104,152,.2); flex-shrink:0; margin-top:2px; }
+.home-sol__item-icon svg { width:18px; height:18px; stroke:#9B8FFF; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .home-sol__item-title { font-weight:700; font-size:.88rem; margin-bottom:4px; color:#F4F6F8; }
 .home-sol__item-text { font-size:.845rem; color:rgba(239,238,234,.55); line-height:1.65; }
 .home-sol__nira { background:rgba(45,43,78,.65); border:1px solid rgba(107,104,152,.28); border-radius:22px; padding:44px 36px; text-align:center; position:relative; overflow:hidden; }
 .home-sol__nira::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%,rgba(155,143,255,.12) 0%,transparent 65%); pointer-events:none; }
-.home-sol__nira-owl { font-size:5.5rem; animation:float 5s ease-in-out infinite; display:block; filter:drop-shadow(0 0 22px rgba(155,143,255,.4)); margin-bottom:14px; }
+.home-sol__nira-icon { display:flex; align-items:center; justify-content:center; width:80px; height:80px; border-radius:50%; background:rgba(107,104,152,.18); border:1px solid rgba(155,143,255,.25); margin:0 auto 20px; animation:float 5s ease-in-out infinite; }
+.home-sol__nira-icon svg { width:40px; height:40px; stroke:#9B8FFF; fill:none; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 0 12px rgba(155,143,255,.4)); }
 .home-sol__nira-name { font-weight:800; font-size:2.8rem; letter-spacing:.12em; color:#F4F6F8; margin-bottom:6px; }
 .home-sol__nira-full { font-size:.68rem; color:rgba(239,238,234,.4); letter-spacing:.09em; text-transform:uppercase; line-height:1.6; margin-bottom:24px; font-family:'Anonymous Pro',monospace; }
 .home-sol__badges { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; }
@@ -168,7 +159,8 @@ const css = `
 .home-pub { padding:90px 0; background:var(--bg-deep); }
 .home-pub__grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
 .home-pub__card { background:var(--bg-card); border:1px solid rgba(107,104,152,.15); border-radius:20px; padding:32px; }
-.home-pub__ctitle { font-weight:700; font-size:.9rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:20px; color:rgba(239,238,234,.8); padding-bottom:14px; border-bottom:1px solid rgba(107,104,152,.18); }
+.home-pub__ctitle { font-weight:700; font-size:.9rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:20px; color:rgba(239,238,234,.8); padding-bottom:14px; border-bottom:1px solid rgba(107,104,152,.18); display:flex; align-items:center; gap:8px; }
+.home-pub__ctitle svg { width:16px; height:16px; stroke:#9B8FFF; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .home-pub__list { display:flex; flex-direction:column; gap:11px; }
 .home-pub__item { display:flex; align-items:center; gap:10px; font-size:.9rem; color:rgba(239,238,234,.7); }
 .home-pub__dot { width:6px; height:6px; border-radius:50%; background:#9B8FFF; flex-shrink:0; }
@@ -186,11 +178,11 @@ const css = `
   border-radius:14px; padding:14px 16px; transition:border-color .25s; text-decoration:none;
 }
 .home-faq__contact:hover { border-color:rgba(155,143,255,.38); background:rgba(155,143,255,.07); }
-.home-faq__contact-icon { font-size:1.4rem; flex-shrink:0; }
+.home-faq__contact-icon { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:9px; background:rgba(107,104,152,.18); flex-shrink:0; }
+.home-faq__contact-icon svg { width:18px; height:18px; stroke:#9B8FFF; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.home-faq__contact-icon--sos svg { stroke:#FF4757; }
 .home-faq__contact-title { font-weight:700; font-size:.85rem; color:#F4F6F8; margin-bottom:2px; }
 .home-faq__contact-sub { font-size:.72rem; color:rgba(239,238,234,.4); }
-
-/* Accordion FAQ */
 .home-faq__list { display:flex; flex-direction:column; gap:8px; }
 .faq-item {
   background:rgba(30,28,56,.8);
@@ -199,27 +191,18 @@ const css = `
   transition:border-color .28s, box-shadow .28s;
 }
 .faq-item--open { border-color:rgba(155,143,255,.3); box-shadow:0 6px 28px rgba(0,0,0,.25); }
-.faq-item__btn {
-  width:100%; display:flex; align-items:center; justify-content:space-between; gap:14px;
-  padding:18px 20px; background:none; border:none; cursor:pointer; text-align:left; transition:background .22s;
-}
+.faq-item__btn { width:100%; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:18px 20px; background:none; border:none; cursor:pointer; text-align:left; transition:background .22s; }
 .faq-item__btn:hover { background:rgba(107,104,152,.1); }
 .faq-item--open .faq-item__btn { background:rgba(107,104,152,.1); }
 .faq-item__q { font-family:'Poppins',sans-serif; font-weight:600; font-size:.9rem; color:#F4F6F8; line-height:1.4; flex:1; }
-.faq-item__icon {
-  width:26px; height:26px; border-radius:50%;
-  background:rgba(107,104,152,.2); border:1px solid rgba(107,104,152,.3);
-  display:flex; align-items:center; justify-content:center;
-  font-size:.8rem; color:rgba(239,238,234,.55); flex-shrink:0;
-  transition:all .28s;
-}
+.faq-item__icon { width:26px; height:26px; border-radius:50%; background:rgba(107,104,152,.2); border:1px solid rgba(107,104,152,.3); display:flex; align-items:center; justify-content:center; font-size:.8rem; color:rgba(239,238,234,.55); flex-shrink:0; transition:all .28s; }
 .faq-item--open .faq-item__icon { background:rgba(155,143,255,.18); border-color:rgba(155,143,255,.4); color:#9B8FFF; transform:rotate(45deg); }
 .faq-item__body { max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(0,1,.2,1),padding .3s; padding:0 20px; }
 .faq-item--open .faq-item__body { max-height:320px; padding-bottom:18px; }
 .faq-item__a { font-size:.875rem; color:rgba(239,238,234,.65); line-height:1.78; border-top:1px solid rgba(107,104,152,.14); padding-top:14px; font-weight:400; }
 .faq-item__tag { display:inline-block; background:rgba(155,143,255,.1); border-radius:100px; padding:2px 10px; font-size:.6rem; color:#9B8FFF; letter-spacing:.08em; text-transform:uppercase; margin-bottom:10px; font-weight:600; }
 
-/* ════════ EQUIPE — cards hover glow ════════ */
+/* ════════ EQUIPE ════════ */
 .home-equipe { padding:90px 0; background:var(--bg-deep); }
 .home-equipe__grid { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; }
 .equipe-card {
@@ -236,25 +219,19 @@ const css = `
   background: radial-gradient(circle at 50% 120%, rgba(155,143,255,.14) 0%, transparent 65%);
   opacity: 0; transition: opacity .35s;
 }
-.equipe-card:hover {
-  border-color: rgba(155,143,255,.32);
-  transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(0,0,0,.45);
-}
+.equipe-card:hover { border-color: rgba(155,143,255,.32); transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,.45); }
 .equipe-card:hover::before { opacity: 1; }
 .equipe-card__avatar {
   width: 70px; height: 70px; border-radius: 50%;
   background: linear-gradient(135deg, rgba(107,104,152,.3), rgba(155,143,255,.15));
   border: 2px solid rgba(107,104,152,.28);
   display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 16px; font-size: 1.9rem;
+  margin: 0 auto 16px;
   transition: all .35s; position: relative; z-index: 1;
 }
-.equipe-card:hover .equipe-card__avatar {
-  border-color: rgba(155,143,255,.55);
-  box-shadow: 0 0 20px rgba(155,143,255,.22);
-  transform: scale(1.07);
-}
+.equipe-card__avatar svg { width:28px; height:28px; stroke:rgba(155,143,255,.65); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:stroke .35s; }
+.equipe-card:hover .equipe-card__avatar { border-color: rgba(155,143,255,.55); box-shadow: 0 0 20px rgba(155,143,255,.22); transform: scale(1.07); }
+.equipe-card:hover .equipe-card__avatar svg { stroke:#9B8FFF; }
 .equipe-card__name { font-weight:700; font-size:.9rem; color:#F4F6F8; margin-bottom:5px; position:relative; z-index:1; }
 .equipe-card__role { font-size:.66rem; color:#9B8FFF; letter-spacing:.09em; text-transform:uppercase; font-weight:600; margin-bottom:8px; position:relative; z-index:1; }
 .equipe-card__school { font-size:.63rem; color:rgba(239,238,234,.3); font-family:'Anonymous Pro',monospace; position:relative; z-index:1; }
@@ -279,17 +256,17 @@ const css = `
 `;
 
 const dores = [
-  { icon:'🔇', titulo:'O Silêncio',             texto:'Medo de represália, vergonha e dependência tornam o silêncio uma armadilha, não uma escolha.', orb:'rgba(155,143,255,.22)' },
-  { icon:'🚪', titulo:'Falta de Acesso',         texto:'Ir a uma delegacia presencialmente é impossível para quem vive sob vigilância constante.', orb:'rgba(255,200,0,.18)' },
-  { icon:'⚡', titulo:'Sem Resposta Rápida',     texto:'Em momentos de crise, ligar ao telefone não é uma opção. É preciso socorro silencioso.', orb:'rgba(255,71,87,.18)' },
-  { icon:'💔', titulo:'Ausência de Acolhimento', texto:'Antes da denúncia, existe a necessidade de ser ouvida — sem julgamento, sem burocracia.', orb:'rgba(46,213,115,.16)' },
+  { Icon: VolumeX,    titulo:'O Silêncio',             texto:'Medo de represália, vergonha e dependência tornam o silêncio uma armadilha, não uma escolha.', orb:'rgba(155,143,255,.22)' },
+  { Icon: DoorClosed, titulo:'Falta de Acesso',         texto:'Ir a uma delegacia presencialmente é impossível para quem vive sob vigilância constante.', orb:'rgba(255,200,0,.18)' },
+  { Icon: Zap,        titulo:'Sem Resposta Rápida',     texto:'Em momentos de crise, ligar ao telefone não é uma opção. É preciso socorro silencioso.', orb:'rgba(255,71,87,.18)' },
+  { Icon: HeartCrack, titulo:'Ausência de Acolhimento', texto:'Antes da denúncia, existe a necessidade de ser ouvida — sem julgamento, sem burocracia.', orb:'rgba(46,213,115,.16)' },
 ];
 
 const solucoes = [
-  { icon:'🦉', titulo:'Celular como ferramenta de defesa',       texto:'Interface discreta que vira proteção silenciosa sem chamar atenção.' },
-  { icon:'🔒', titulo:'Canal 100% anônimo',                      texto:'Nenhuma identificação necessária. Elimina o medo inicial de julgamento.' },
-  { icon:'🆘', titulo:'S.O.S. — um toque, GPS em tempo real',    texto:'Um único toque envia localização para a rede de apoio. Sem falar nada.' },
-  { icon:'🤝', titulo:'Acolhimento e encaminhamento integrados', texto:'Suporte emocional e direcionamento para serviços próximos.' },
+  { Icon: Shield,      titulo:'Celular como ferramenta de defesa',       texto:'Interface discreta que vira proteção silenciosa sem chamar atenção.' },
+  { Icon: ShieldCheck, titulo:'Canal 100% anônimo',                      texto:'Nenhuma identificação necessária. Elimina o medo inicial de julgamento.' },
+  { Icon: AlertTriangle, titulo:'S.O.S. — um toque, GPS em tempo real',  texto:'Um único toque envia localização para a rede de apoio. Sem falar nada.' },
+  { Icon: Users,       titulo:'Acolhimento e encaminhamento integrados',  texto:'Suporte emocional e direcionamento para serviços próximos.' },
 ];
 
 const FAQ_ITEMS = [
@@ -304,11 +281,11 @@ const FAQ_ITEMS = [
 ];
 
 const equipe = [
-  { nome:'Giovanna', papel:'UX / Design',      emoji:'🎨' },
-  { nome:'Samuel',   papel:'Backend / PHP',    emoji:'⚙️' },
-  { nome:'Kauã',     papel:'Frontend / React', emoji:'💻' },
-  { nome:'Pietro',   papel:'Full Stack',        emoji:'🔧' },
-  { nome:'Lucas',    papel:'QA / Docs',         emoji:'📋' },
+  { nome:'Giovanna', papel:'UX / Design',      Icon: Palette },
+  { nome:'Samuel',   papel:'Backend / PHP',    Icon: Settings },
+  { nome:'Kauã',     papel:'Frontend / React', Icon: Code2 },
+  { nome:'Pietro',   papel:'Full Stack',        Icon: Layers },
+  { nome:'Lucas',    papel:'QA / Docs',         Icon: ClipboardCheck },
 ];
 
 function FaqItem({ item }) {
@@ -344,7 +321,7 @@ export default function HomePage() {
             <p className="home-hero__quote">"Mais do que um app — um porto seguro digital."</p>
             <p className="home-hero__desc">Tecnologia para ouvir, acolher e proteger quem mais precisa. Canal anônimo, seguro e disponível de qualquer lugar.</p>
             <div className="home-hero__actions">
-              <Link to="/triagem" className="btn btn-primary btn-lg">🆘 Iniciar Triagem</Link>
+              <Link to="/triagem" className="btn btn-primary btn-lg">Iniciar Triagem</Link>
               <Link to="/como-funciona" className="btn btn-outline btn-lg">Como Funciona</Link>
             </div>
             <div className="home-hero__stats">
@@ -355,15 +332,24 @@ export default function HomePage() {
           </div>
           <div className="home-hero__visual">
             <div className="home-hero__ring home-hero__ring1" /><div className="home-hero__ring home-hero__ring2" />
-            <div className="home-hero__owl-circle"><span className="home-hero__owl">🦉</span></div>
-            <div className="home-hero__fcard home-hero__fcard1"><span className="home-hero__fcard-icon">🔒</span><div><p className="home-hero__fcard-title">100% Anônimo</p><p className="home-hero__fcard-sub">Sem identificação</p></div></div>
-            <div className="home-hero__fcard home-hero__fcard2"><span className="home-hero__fcard-icon">🆘</span><div><p className="home-hero__fcard-title">Botão S.O.S.</p><p className="home-hero__fcard-sub">Alerta + GPS</p></div></div>
-            <div className="home-hero__fcard home-hero__fcard3"><span className="home-hero__fcard-icon">🤝</span><div><p className="home-hero__fcard-title">Rede de Apoio</p><p className="home-hero__fcard-sub">Psicólogos · ONGs</p></div></div>
+            <div className="home-hero__icon-circle"><Shield /></div>
+            <div className="home-hero__fcard home-hero__fcard1">
+              <span className="home-hero__fcard-icon"><ShieldCheck /></span>
+              <div><p className="home-hero__fcard-title">100% Anônimo</p><p className="home-hero__fcard-sub">Sem identificação</p></div>
+            </div>
+            <div className="home-hero__fcard home-hero__fcard2">
+              <span className="home-hero__fcard-icon home-hero__fcard-icon--sos"><AlertTriangle /></span>
+              <div><p className="home-hero__fcard-title">Botão S.O.S.</p><p className="home-hero__fcard-sub">Alerta + GPS</p></div>
+            </div>
+            <div className="home-hero__fcard home-hero__fcard3">
+              <span className="home-hero__fcard-icon"><Users /></span>
+              <div><p className="home-hero__fcard-title">Rede de Apoio</p><p className="home-hero__fcard-sub">Psicólogos · ONGs</p></div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ══ DORES — nova animação ══ */}
+      {/* ── DORES ── */}
       <section className="home-dores">
         <div className="container">
           <div style={{ textAlign:'center', marginBottom:'52px' }}>
@@ -376,11 +362,10 @@ export default function HomePage() {
               <div className="dore-card" key={d.titulo} style={{ '--orb-color': d.orb }}>
                 <div className="dore-card__orb" />
                 <div className="dore-card__icon-wrap">
-                  <span className="dore-card__icon">{d.icon}</span>
+                  <span className="dore-card__icon"><d.Icon /></span>
                 </div>
                 <p className="dore-card__title">{d.titulo}</p>
                 <p className="dore-card__text">{d.texto}</p>
-                <div className="dore-card" style={{ display:'none' }} />
               </div>
             ))}
           </div>
@@ -408,7 +393,7 @@ export default function HomePage() {
               <div className="home-sol__items">
                 {solucoes.map(s => (
                   <div className="home-sol__item" key={s.titulo}>
-                    <span className="home-sol__item-icon">{s.icon}</span>
+                    <span className="home-sol__item-icon"><s.Icon /></span>
                     <div><p className="home-sol__item-title">{s.titulo}</p><p className="home-sol__item-text">{s.texto}</p></div>
                   </div>
                 ))}
@@ -416,7 +401,7 @@ export default function HomePage() {
               <Link to="/como-funciona" className="btn btn-primary">Ver Demonstração →</Link>
             </div>
             <div className="home-sol__nira">
-              <span className="home-sol__nira-owl">🦉</span>
+              <div className="home-sol__nira-icon"><Shield /></div>
               <div className="home-sol__nira-name">NIRA</div>
               <div className="home-sol__nira-full">Núcleo de Identificação<br />e Resposta ao Abuso</div>
               <div className="home-sol__badges"><span className="home-sol__badge">GovTech</span><span className="home-sol__badge">SocialTech</span><span className="home-sol__badge">E.Y.E 2026</span></div>
@@ -434,7 +419,7 @@ export default function HomePage() {
           </div>
           <div className="home-pub__grid">
             <div className="home-pub__card">
-              <p className="home-pub__ctitle">👤 Usuários Finais</p>
+              <p className="home-pub__ctitle"><User />Usuários Finais</p>
               <div className="home-pub__list">
                 {['Mulheres em situação de violência ou risco','Pessoas em vulnerabilidade social','Quem precisa de ajuda mas teme se expor','Dependentes emocionais ou financeiros'].map(i => (
                   <div className="home-pub__item" key={i}><span className="home-pub__dot" />{i}</div>
@@ -442,7 +427,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="home-pub__card">
-              <p className="home-pub__ctitle">🤝 Gestores e Parceiros</p>
+              <p className="home-pub__ctitle"><Users />Gestores e Parceiros</p>
               <div className="home-pub__list">
                 {['Psicólogos e assistentes sociais','ONGs e centros de apoio','Autoridades e agentes de segurança','Secretarias municipais de assistência'].map(i => (
                   <div className="home-pub__item" key={i}><span className="home-pub__dot" />{i}</div>
@@ -453,7 +438,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══ FAQ ══ */}
+      {/* ── FAQ ── */}
       <section className="home-faq">
         <div className="container">
           <div className="home-faq__layout">
@@ -463,15 +448,15 @@ export default function HomePage() {
               <p className="home-faq__side-sub">Tire suas dúvidas sobre segurança, privacidade e como a NIRA funciona na prática.</p>
               <div className="home-faq__side-cta">
                 <Link to="/triagem" className="home-faq__contact">
-                  <span className="home-faq__contact-icon">🆘</span>
+                  <span className="home-faq__contact-icon home-faq__contact-icon--sos"><AlertTriangle /></span>
                   <div><p className="home-faq__contact-title">Precisa de ajuda agora?</p><p className="home-faq__contact-sub">Acesse a triagem anônima</p></div>
                 </Link>
                 <Link to="/conteudos" className="home-faq__contact">
-                  <span className="home-faq__contact-icon">📚</span>
+                  <span className="home-faq__contact-icon"><BookOpen /></span>
                   <div><p className="home-faq__contact-title">Ver conteúdos informativos</p><p className="home-faq__contact-sub">Artigos e guias das ONGs parceiras</p></div>
                 </Link>
                 <a href="tel:180" className="home-faq__contact">
-                  <span className="home-faq__contact-icon">📞</span>
+                  <span className="home-faq__contact-icon"><Phone /></span>
                   <div><p className="home-faq__contact-title">Ligue 180</p><p className="home-faq__contact-sub">Central da Mulher — 24 horas</p></div>
                 </a>
               </div>
@@ -483,7 +468,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══ EQUIPE ══ */}
+      {/* ── EQUIPE ── */}
       <section className="home-equipe section">
         <div className="container">
           <div style={{ textAlign:'center', marginBottom:'48px' }}>
@@ -494,7 +479,7 @@ export default function HomePage() {
           <div className="home-equipe__grid">
             {equipe.map(m => (
               <div className="equipe-card" key={m.nome}>
-                <div className="equipe-card__avatar">{m.emoji}</div>
+                <div className="equipe-card__avatar"><m.Icon /></div>
                 <p className="equipe-card__name">{m.nome}</p>
                 <p className="equipe-card__role">{m.papel}</p>
                 <p className="equipe-card__school">SESI-SENAI · 2026</p>

@@ -2,6 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import {
+  ShieldCheck, Users, Zap, Shield,
+  AlertTriangle, User,
+  Palette, Settings, Code2, Layers, ClipboardCheck,
+  Atom, Globe, Map, Bot, Smartphone, Database, Lock
+} from 'lucide-react';
 
 const css = `
 /* ══ HERO ══ */
@@ -12,12 +18,10 @@ const css = `
   padding-top: 80px;
   background: var(--bg-deep);
 }
-/* grade de pontos de fundo */
 .sb-hero::before {
   content: '';
   position: absolute; inset: 0;
-  background-image:
-    radial-gradient(circle, rgba(107,104,152,.18) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(107,104,152,.18) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
   pointer-events: none;
@@ -57,9 +61,7 @@ const css = `
   max-width: 480px;
 }
 .sb-hero__actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 52px; }
-.sb-hero__metrics {
-  display: flex; gap: 36px; flex-wrap: wrap;
-}
+.sb-hero__metrics { display: flex; gap: 36px; flex-wrap: wrap; }
 .sb-hero__metric-num { display: block; font-weight: 800; font-size: 1.8rem; color: #F4F6F8; line-height: 1; letter-spacing: -.02em; }
 .sb-hero__metric-lbl { font-size: .68rem; color: rgba(239,238,234,.38); text-transform: uppercase; letter-spacing: .08em; margin-top: 3px; }
 .sb-hero__metric-sep { width: 1px; background: rgba(107,104,152,.25); align-self: stretch; }
@@ -80,7 +82,6 @@ const css = `
 }
 .sb-hero__window-dot { width: 10px; height: 10px; border-radius: 50%; }
 .sb-hero__window-body { padding: 28px 24px; }
-/* Preview da interface NIRA */
 .sb-preview { display: flex; flex-direction: column; gap: 12px; }
 .sb-preview__msg {
   display: flex; align-items: flex-start; gap: 10px;
@@ -89,16 +90,16 @@ const css = `
 .sb-preview__msg--right { flex-direction: row-reverse; }
 .sb-preview__av {
   width: 30px; height: 30px; border-radius: 50%;
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: .85rem;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
 }
 .sb-preview__av--ia   { background: linear-gradient(135deg, #4A4870, #9B8FFF); }
 .sb-preview__av--user { background: linear-gradient(135deg, #2D2B4E, #6B6898); }
+.sb-preview__av svg { width: 14px; height: 14px; stroke: rgba(255,255,255,.85); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .sb-preview__bubble {
   padding: 10px 14px; border-radius: 14px; font-size: .82rem; line-height: 1.6; max-width: 260px;
 }
 .sb-preview__bubble--ia   { background: rgba(45,43,78,.75); border: 1px solid rgba(107,104,152,.22); color: rgba(239,238,234,.88); border-top-left-radius: 4px; }
 .sb-preview__bubble--user { background: rgba(107,104,152,.35); border: 1px solid rgba(155,143,255,.18); color: #F4F6F8; border-top-right-radius: 4px; }
-/* Typing dots */
 .sb-preview__typing { display: flex; gap: 4px; padding: 12px 16px; background: rgba(45,43,78,.75); border: 1px solid rgba(107,104,152,.2); border-radius: 14px; border-top-left-radius: 4px; align-items: center; }
 .sb-preview__dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(155,143,255,.7); animation: typing 1.2s ease-in-out infinite; }
 .sb-preview__dot:nth-child(2) { animation-delay: .2s; }
@@ -117,7 +118,9 @@ const css = `
 }
 .sb-badge-float--1 { top: -20px; right: -24px; animation-delay: .4s; }
 .sb-badge-float--2 { bottom: -18px; left: -20px; animation-delay: .6s; }
-.sb-badge-float__icon { font-size: 1.2rem; }
+.sb-badge-float__icon { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; background:rgba(107,104,152,.18); }
+.sb-badge-float__icon svg { width: 14px; height: 14px; stroke: #9B8FFF; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sb-badge-float--2 .sb-badge-float__icon svg { stroke: #FF4757; }
 .sb-badge-float__title { font-weight: 700; font-size: .78rem; color: #F4F6F8; }
 .sb-badge-float__sub { font-size: .65rem; color: rgba(239,238,234,.4); }
 
@@ -147,7 +150,8 @@ const css = `
   border-radius: 16px; transition: all .28s;
 }
 .sb-manifesto__item:hover { border-color: rgba(155,143,255,.3); transform: translateX(4px); }
-.sb-manifesto__item-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+.sb-manifesto__item-icon { display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px; background:rgba(107,104,152,.14); border:1px solid rgba(107,104,152,.2); flex-shrink:0; }
+.sb-manifesto__item-icon svg { width:18px; height:18px; stroke:#9B8FFF; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .sb-manifesto__item-title { font-weight: 700; font-size: .9rem; color: #F4F6F8; margin-bottom: 4px; }
 .sb-manifesto__item-text  { font-size: .83rem; color: rgba(239,238,234,.55); line-height: 1.68; }
 
@@ -190,12 +194,17 @@ const css = `
 }
 .sb-membro:hover { border-color: rgba(155,143,255,.28); transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,.4); }
 .sb-membro:hover::after { opacity: 1; }
-.sb-membro__emoji {
-  font-size: 2.2rem; display: block; margin-bottom: 14px;
-  filter: drop-shadow(0 0 8px rgba(155,143,255,.2));
-  transition: filter .32s, transform .32s;
+.sb-membro__icon {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(107,104,152,.3), rgba(155,143,255,.15));
+  border: 2px solid rgba(107,104,152,.28);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+  transition: all .32s;
 }
-.sb-membro:hover .sb-membro__emoji { filter: drop-shadow(0 0 14px rgba(155,143,255,.45)); transform: scale(1.1); }
+.sb-membro__icon svg { width: 24px; height: 24px; stroke: rgba(155,143,255,.65); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke .32s; }
+.sb-membro:hover .sb-membro__icon { border-color: rgba(155,143,255,.5); box-shadow: 0 0 16px rgba(155,143,255,.2); }
+.sb-membro:hover .sb-membro__icon svg { stroke: #9B8FFF; }
 .sb-membro__nome   { font-weight: 700; font-size: .9rem; color: #F4F6F8; margin-bottom: 5px; }
 .sb-membro__papel  { font-size: .66rem; color: #9B8FFF; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
 .sb-membro__school { font-size: .63rem; color: rgba(239,238,234,.28); font-family: 'Anonymous Pro', monospace; }
@@ -215,7 +224,7 @@ const css = `
   font-weight: 600; transition: all .25s;
 }
 .sb-tech__pill:hover { border-color: rgba(155,143,255,.38); color: #F4F6F8; transform: translateY(-2px); }
-.sb-tech__pill-icon { font-size: 1rem; }
+.sb-tech__pill svg { width: 15px; height: 15px; stroke: rgba(155,143,255,.6); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ══ CTA FINAL ══ */
 .sb-cta { padding: 100px 0; background: var(--bg-dark); position: relative; overflow: hidden; }
@@ -225,11 +234,9 @@ const css = `
   background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(107,104,152,.15) 0%, transparent 65%);
   pointer-events: none;
 }
-.sb-cta__inner {
-  position: relative; z-index: 1;
-  text-align: center; max-width: 640px; margin: 0 auto;
-}
-.sb-cta__owl { font-size: 3.5rem; margin-bottom: 20px; display: block; animation: float 4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(155,143,255,.45)); }
+.sb-cta__inner { position: relative; z-index: 1; text-align: center; max-width: 640px; margin: 0 auto; }
+.sb-cta__icon { display:flex; align-items:center; justify-content:center; width:80px; height:80px; border-radius:50%; background:rgba(107,104,152,.18); border:1px solid rgba(155,143,255,.25); margin:0 auto 24px; animation:float 4s ease-in-out infinite; }
+.sb-cta__icon svg { width:40px; height:40px; stroke:#9B8FFF; fill:none; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 0 14px rgba(155,143,255,.5)); }
 .sb-cta__title { font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 800; margin-bottom: 14px; letter-spacing: -.02em; }
 .sb-cta__desc  { font-size: .98rem; color: rgba(239,238,234,.55); line-height: 1.8; margin-bottom: 36px; font-weight: 400; }
 .sb-cta__btns  { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
@@ -260,28 +267,27 @@ const STATS = [
 ];
 
 const VALORES = [
-  { icon:'🔒', titulo:'Anonimato por padrão', texto:'O anonimato não é uma feature — é o princípio central. Nenhuma decisão de produto pode comprometer a segurança de quem usa.' },
-  { icon:'🤝', titulo:'Acolhimento antes de tudo', texto:'Antes da triagem, antes da denúncia — existe a necessidade de ser ouvida sem julgamento. Tecnologia que abraça.' },
-  { icon:'⚡', titulo:'Código que salva vidas', texto:'Cada linha existe para reduzir uma barreira real. Não construímos tecnologia por tecnologia — construímos impacto mensurável.' },
+  { Icon: ShieldCheck, titulo:'Anonimato por padrão',     texto:'O anonimato não é uma feature — é o princípio central. Nenhuma decisão de produto pode comprometer a segurança de quem usa.' },
+  { Icon: Users,       titulo:'Acolhimento antes de tudo', texto:'Antes da triagem, antes da denúncia — existe a necessidade de ser ouvida sem julgamento. Tecnologia que abraça.' },
+  { Icon: Zap,         titulo:'Código que salva vidas',    texto:'Cada linha existe para reduzir uma barreira real. Não construímos tecnologia por tecnologia — construímos impacto mensurável.' },
 ];
 
 const EQUIPE = [
-  { nome:'Giovanna', papel:'UX / Design',      emoji:'🎨' },
-  { nome:'Samuel',   papel:'Backend / PHP',    emoji:'⚙️' },
-  { nome:'Kauã',     papel:'Frontend / React', emoji:'💻' },
-  { nome:'Pietro',   papel:'Full Stack',        emoji:'🔧' },
-  { nome:'Lucas',    papel:'QA / Docs',         emoji:'📋' },
+  { nome:'Giovanna', papel:'UX / Design',      Icon: Palette },
+  { nome:'Samuel',   papel:'Backend / PHP',    Icon: Settings },
+  { nome:'Kauã',     papel:'Frontend / React', Icon: Code2 },
+  { nome:'Pietro',   papel:'Full Stack',        Icon: Layers },
+  { nome:'Lucas',    papel:'QA / Docs',         Icon: ClipboardCheck },
 ];
 
 const TECH = [
-  { icon:'⚛️', name:'React' },
-  { icon:'🐘', name:'PHP' },
-  { icon:'🗄️', name:'MySQL' },
-  { icon:'🗺️', name:'Leaflet.js' },
-  { icon:'🤖', name:'PsiTech IA' },
-  { icon:'📱', name:'Mobile First' },
-  { icon:'🔒', name:'Zero Data' },
-  { icon:'🌐', name:'Open Source Maps' },
+  { Icon: Atom,       name:'React' },
+  { Icon: Database,   name:'PHP / MySQL' },
+  { Icon: Map,        name:'Leaflet.js' },
+  { Icon: Bot,        name:'PsiTech IA' },
+  { Icon: Smartphone, name:'Mobile First' },
+  { Icon: Lock,       name:'Zero Data' },
+  { Icon: Globe,      name:'Open Source Maps' },
 ];
 
 const CHAT_PREVIEW = [
@@ -340,12 +346,14 @@ export default function SobrePage() {
                     <div className="sb-preview">
                       {CHAT_PREVIEW.map((m, i) => (
                         <div key={i} className={`sb-preview__msg${m.role==='user'?' sb-preview__msg--right':''}`} style={{ animationDelay: m.delay }}>
-                          <div className={`sb-preview__av sb-preview__av--${m.role}`}>{m.role==='ia'?'🦉':'👤'}</div>
+                          <div className={`sb-preview__av sb-preview__av--${m.role}`}>
+                            {m.role==='ia' ? <Shield /> : <User />}
+                          </div>
                           <div className={`sb-preview__bubble sb-preview__bubble--${m.role}`}>{m.text}</div>
                         </div>
                       ))}
                       <div className="sb-preview__msg" style={{ animationDelay:'.7s' }}>
-                        <div className="sb-preview__av sb-preview__av--ia">🦉</div>
+                        <div className="sb-preview__av sb-preview__av--ia"><Shield /></div>
                         <div className="sb-preview__typing">
                           <div className="sb-preview__dot" />
                           <div className="sb-preview__dot" />
@@ -356,11 +364,11 @@ export default function SobrePage() {
                   </div>
                 </div>
                 <div className="sb-badge-float sb-badge-float--1">
-                  <span className="sb-badge-float__icon">🔒</span>
+                  <span className="sb-badge-float__icon"><ShieldCheck /></span>
                   <div><p className="sb-badge-float__title">Zero dados pessoais</p><p className="sb-badge-float__sub">Anonimato total</p></div>
                 </div>
                 <div className="sb-badge-float sb-badge-float--2">
-                  <span className="sb-badge-float__icon">🆘</span>
+                  <span className="sb-badge-float__icon"><AlertTriangle /></span>
                   <div><p className="sb-badge-float__title">S.O.S. em 1 toque</p><p className="sb-badge-float__sub">GPS silencioso</p></div>
                 </div>
               </div>
@@ -383,7 +391,7 @@ export default function SobrePage() {
               <div className="sb-manifesto__list">
                 {VALORES.map(v => (
                   <div key={v.titulo} className="sb-manifesto__item">
-                    <span className="sb-manifesto__item-icon">{v.icon}</span>
+                    <span className="sb-manifesto__item-icon"><v.Icon /></span>
                     <div>
                       <p className="sb-manifesto__item-title">{v.titulo}</p>
                       <p className="sb-manifesto__item-text">{v.texto}</p>
@@ -428,7 +436,7 @@ export default function SobrePage() {
             <div className="sb-equipe__grid">
               {EQUIPE.map(m => (
                 <div key={m.nome} className="sb-membro">
-                  <span className="sb-membro__emoji">{m.emoji}</span>
+                  <div className="sb-membro__icon"><m.Icon /></div>
                   <p className="sb-membro__nome">{m.nome}</p>
                   <p className="sb-membro__papel">{m.papel}</p>
                   <p className="sb-membro__school">SESI-SENAI · 2026</p>
@@ -448,7 +456,7 @@ export default function SobrePage() {
             <div className="sb-tech__row">
               {TECH.map(t => (
                 <div key={t.name} className="sb-tech__pill">
-                  <span className="sb-tech__pill-icon">{t.icon}</span>
+                  <t.Icon />
                   {t.name}
                 </div>
               ))}
@@ -460,13 +468,13 @@ export default function SobrePage() {
         <section className="sb-cta">
           <div className="container">
             <div className="sb-cta__inner">
-              <span className="sb-cta__owl">🦉</span>
+              <div className="sb-cta__icon"><Shield /></div>
               <h2 className="sb-cta__title">Você não está sozinha.</h2>
               <p className="sb-cta__desc">
                 A NIRA é um espaço seguro, anônimo e gratuito. Se você ou alguém que você conhece precisa de apoio, estamos aqui — silenciosos quando precisar, presentes quando necessário.
               </p>
               <div className="sb-cta__btns">
-                <Link to="/triagem" className="btn btn-danger btn-lg">🆘 Iniciar Triagem Agora</Link>
+                <Link to="/triagem" className="btn btn-danger btn-lg">Iniciar Triagem Agora</Link>
                 <Link to="/conteudos" className="btn btn-outline btn-lg">Ver Conteúdos</Link>
               </div>
               <div className="sb-cta__numbers">

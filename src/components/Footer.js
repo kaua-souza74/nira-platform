@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Shield, AlertTriangle } from 'lucide-react';
 
 const css = `
 .footer {
@@ -14,7 +15,13 @@ const css = `
   margin-bottom: 40px;
 }
 .footer__brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.footer__brand-owl { font-size: 1.4rem; }
+.footer__brand-icon {
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:7px;
+  background:linear-gradient(135deg,rgba(107,104,152,.3),rgba(155,143,255,.2));
+  border:1px solid rgba(155,143,255,.25);flex-shrink:0;
+}
+.footer__brand-icon svg{width:14px;height:14px;stroke:#9B8FFF;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .footer__brand-name { font-weight: 700; font-size: 1.2rem; letter-spacing: .14em; color: #F4F6F8; }
 .footer__brand-desc { font-size: .85rem; color: rgba(239,238,234,.45); line-height: 1.7; max-width: 270px; margin-bottom: 14px; }
 .footer__eye-tag { font-size: .68rem; color: rgba(239,238,234,.28); letter-spacing: .06em; }
@@ -22,6 +29,12 @@ const css = `
 .footer__links { display: flex; flex-direction: column; gap: 9px; }
 .footer__link { font-size: .85rem; color: rgba(239,238,234,.48); transition: color .25s; text-decoration: none; }
 .footer__link:hover { color: #9B8FFF; }
+.footer__link--sos {
+  display:inline-flex;align-items:center;gap:6px;
+  color:#FF4757 !important;
+  transition:color .25s;
+}
+.footer__link--sos svg{width:13px;height:13px;stroke:#FF4757;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .footer__bottom {
   display: flex; align-items: center; justify-content: space-between;
   padding-top: 24px;
@@ -44,7 +57,7 @@ export default function Footer() {
           <div className="footer__inner">
             <div>
               <div className="footer__brand-row">
-                <span className="footer__brand-owl">🦉</span>
+                <span className="footer__brand-icon"><Shield /></span>
                 <span className="footer__brand-name">NIRA</span>
               </div>
               <p className="footer__brand-desc">
@@ -75,7 +88,9 @@ export default function Footer() {
                 <a href="tel:180" className="footer__link">180 — Central da Mulher</a>
                 <a href="tel:192" className="footer__link">192 — SAMU</a>
                 <a href="tel:100" className="footer__link">100 — Direitos Humanos</a>
-                <Link to="/triagem" className="footer__link" style={{ color:'#FF4757' }}>🆘 S.O.S. NIRA</Link>
+                <Link to="/triagem" className="footer__link footer__link--sos">
+                  <AlertTriangle /> S.O.S. NIRA
+                </Link>
               </div>
             </div>
           </div>

@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import {
+  Search, BookOpen, Shield, Heart, Home, Lock, FileText,
+  AlertTriangle, Pencil, Users, Baby, X
+} from 'lucide-react';
 
 const css = `
 /* ══════════════ BLOG HERO ══════════════ */
@@ -19,9 +23,10 @@ const css = `
 .blog-hero__search-wrap { position: relative; width: 320px; }
 .blog-hero__search-icon {
   position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  color: rgba(239,238,234,.3); font-size: .95rem;
+  display: flex; align-items: center;
   pointer-events: none;
 }
+.blog-hero__search-icon svg { width:16px; height:16px; stroke:rgba(239,238,234,.3); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .blog-hero__search {
   width: 100%;
   background: rgba(107,104,152,.1);
@@ -59,10 +64,11 @@ const css = `
   width: 100%; height: 360px;
   background: linear-gradient(135deg, rgba(45,43,78,.9), rgba(107,104,152,.5));
   display: flex; align-items: center; justify-content: center;
-  font-size: 7rem;
   position: relative;
   overflow: hidden;
 }
+.blog-featured__img-icon { position:relative; z-index:1; }
+.blog-featured__img-icon svg { width:80px; height:80px; fill:none; stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; opacity:.7; filter:drop-shadow(0 4px 24px rgba(0,0,0,.5)); }
 .blog-featured__img::after {
   content: '';
   position: absolute; inset: 0;
@@ -167,15 +173,11 @@ const css = `
 .blog-card__thumb {
   width: 100%; height: 170px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 3.8rem;
   position: relative; overflow: hidden;
   flex-shrink: 0;
 }
-.blog-card__thumb-bg {
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(45,43,78,.9), rgba(107,104,152,.4));
-}
-.blog-card__thumb-emoji { position: relative; z-index: 1; filter: drop-shadow(0 4px 12px rgba(0,0,0,.4)); }
+.blog-card__thumb-icon { position: relative; z-index: 1; display:flex; align-items:center; justify-content:center; }
+.blog-card__thumb-icon svg { width:52px; height:52px; fill:none; stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; opacity:.75; filter:drop-shadow(0 4px 12px rgba(0,0,0,.4)); }
 /* Gradiente colorido por categoria */
 .blog-card__thumb--direitos  { background: linear-gradient(135deg, rgba(15,40,30,.95), rgba(46,213,115,.18)); }
 .blog-card__thumb--saude     { background: linear-gradient(135deg, rgba(40,35,10,.95), rgba(255,200,0,.15)); }
@@ -235,11 +237,11 @@ const css = `
 .blog-article__hero {
   width: 100%; height: 220px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 6rem;
   background: linear-gradient(135deg, rgba(45,43,78,.95), rgba(107,104,152,.4));
   position: relative;
 }
-.blog-article__hero-emoji { filter: drop-shadow(0 4px 20px rgba(0,0,0,.5)); }
+.blog-article__hero-icon { display:flex; align-items:center; justify-content:center; }
+.blog-article__hero-icon svg { width:80px; height:80px; fill:none; stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; opacity:.8; filter:drop-shadow(0 4px 20px rgba(0,0,0,.5)); }
 .blog-article__close {
   position: absolute; top: 16px; right: 16px;
   width: 38px; height: 38px;
@@ -248,11 +250,11 @@ const css = `
   border-radius: 50%;
   cursor: pointer;
   color: rgba(239,238,234,.7);
-  font-size: 1rem;
   display: flex; align-items: center; justify-content: center;
   transition: all .22s;
   z-index: 1;
 }
+.blog-article__close svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .blog-article__close:hover { background: rgba(107,104,152,.3); color: #F4F6F8; }
 .blog-article__body { padding: 36px 40px 44px; }
 .blog-article__eyebrow { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
@@ -284,7 +286,8 @@ const css = `
 
 /* Vazio */
 .blog-empty { text-align: center; padding: 80px 0; color: rgba(239,238,234,.3); }
-.blog-empty-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+.blog-empty-icon { display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.blog-empty-icon svg { width:48px; height:48px; stroke:rgba(239,238,234,.15); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
 
 @media (max-width: 960px) {
   .blog-featured__card { grid-template-columns: 1fr; }
@@ -300,9 +303,16 @@ const css = `
 }
 `;
 
+const CAT_ICONS = {
+  direitos:  { Icon: Shield,   stroke: '#2ED573' },
+  saude:     { Icon: Heart,    stroke: '#FFC800' },
+  seguranca: { Icon: Lock,     stroke: '#FF4757' },
+  familia:   { Icon: Users,    stroke: '#8B88B8' },
+};
+
 const POSTS = [
   {
-    id: 1, emoji:'⚖️', cat:'direitos', catLabel:'Direitos', destaque:true,
+    id: 1, cat:'direitos', catLabel:'Direitos', destaque:true,
     titulo:'Seus Direitos: Guia Completo da Lei Maria da Penha',
     desc:'Entenda como a Lei 11.340/2006 protege mulheres em situação de violência doméstica, quais medidas protetivas existem e como acioná-las.',
     ong:'ONG Vida Nova', data:'05 mar. 2026', leitura:'8 min',
@@ -323,7 +333,7 @@ const POSTS = [
     `,
   },
   {
-    id: 2, emoji:'💙', cat:'saude', catLabel:'Saúde Mental',
+    id: 2, cat:'saude', catLabel:'Saúde Mental',
     titulo:'Saúde Mental Após o Trauma: Como Iniciar a Recuperação',
     desc:'Entender os sinais de trauma pós-violência é o primeiro passo para buscar ajuda. Você não está sozinha nessa jornada.',
     ong:'Centro Renascer', data:'28 fev. 2026', leitura:'6 min',
@@ -343,7 +353,7 @@ const POSTS = [
     `,
   },
   {
-    id: 3, emoji:'📱', cat:'seguranca', catLabel:'Segurança',
+    id: 3, cat:'seguranca', catLabel:'Segurança',
     titulo:'Segurança Digital: Como Proteger seu Celular do Agressor',
     desc:'Como proteger suas conversas, apagar histórico rapidamente e usar o celular com segurança quando há monitoramento.',
     ong:'Instituto Digital Seguro', data:'22 fev. 2026', leitura:'5 min',
@@ -362,7 +372,7 @@ const POSTS = [
     `,
   },
   {
-    id: 4, emoji:'🏠', cat:'seguranca', catLabel:'Segurança', destaque_grid: true,
+    id: 4, cat:'seguranca', catLabel:'Segurança', destaque_grid: true,
     titulo:'Como Sair de Casa com Segurança: Guia Prático',
     desc:'Planejamento é essencial. Saiba o que levar, quando sair e para onde ir em situação de risco.',
     ong:'ONG Vida Nova', data:'18 fev. 2026', leitura:'7 min',
@@ -382,7 +392,7 @@ const POSTS = [
     `,
   },
   {
-    id: 5, emoji:'📋', cat:'direitos', catLabel:'Direitos',
+    id: 5, cat:'direitos', catLabel:'Direitos',
     titulo:'Como Fazer um Boletim de Ocorrência: Passo a Passo',
     desc:'Registrar uma ocorrência é mais simples do que parece. Veja como fazer mesmo sem marcas físicas visíveis.',
     ong:'Centro Renascer', data:'12 fev. 2026', leitura:'4 min',
@@ -401,7 +411,7 @@ const POSTS = [
     `,
   },
   {
-    id: 6, emoji:'👶', cat:'familia', catLabel:'Família',
+    id: 6, cat:'familia', catLabel:'Família',
     titulo:'Protegendo os Filhos em Situações de Violência Doméstica',
     desc:'Como proteger seus filhos, entender os efeitos do trauma e garantir os direitos deles durante o processo.',
     ong:'Instituto Família Segura', data:'08 fev. 2026', leitura:'6 min',
@@ -457,7 +467,7 @@ export default function ConteudosPage() {
                 <p className="section-sub">Artigos, guias e orientações publicados por ONGs parceiras.</p>
               </div>
               <div className="blog-hero__search-wrap">
-                <span className="blog-hero__search-icon">🔍</span>
+                <span className="blog-hero__search-icon"><Search /></span>
                 <input
                   className="blog-hero__search"
                   type="text"
@@ -475,13 +485,13 @@ export default function ConteudosPage() {
           <section className="blog-featured">
             <div className="container">
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:22 }}>
-                <span className="section-label">📌 Em Destaque</span>
+                <span className="section-label">Em Destaque</span>
                 <span style={{ fontSize:'.72rem', color:'rgba(239,238,234,.3)', fontFamily:"'Anonymous Pro',monospace" }}>{POSTS.length} artigos</span>
               </div>
               <div className="blog-featured__card" onClick={() => setArtigo(destaque)}>
                 <div className={`blog-card__thumb blog-card__thumb--${destaque.cat}`} style={{ height:'100%', minHeight:280 }}>
                   <div className="blog-card__thumb-bg" />
-                  <span style={{ fontSize:'7rem', position:'relative', zIndex:1, filter:'drop-shadow(0 4px 24px rgba(0,0,0,.5))' }}>{destaque.emoji}</span>
+                  {(() => { const ci = CAT_ICONS[destaque.cat]; return ci ? <div className="blog-featured__img-icon"><ci.Icon style={{stroke:ci.stroke}} /></div> : null; })()}
                 </div>
                 <div className="blog-featured__body">
                   <div className="blog-featured__eyebrow">
@@ -491,11 +501,11 @@ export default function ConteudosPage() {
                   <h2 className="blog-featured__title">{destaque.titulo}</h2>
                   <p className="blog-featured__desc">{destaque.desc}</p>
                   <div className="blog-featured__meta">
-                    <span>✍️ {destaque.ong}</span>
+                    <span>por {destaque.ong}</span>
                     <span className="blog-featured__meta-sep">·</span>
-                    <span>📅 {destaque.data}</span>
+                    <span>{destaque.data}</span>
                     <span className="blog-featured__meta-sep">·</span>
-                    <span>⏱ {destaque.leitura} de leitura</span>
+                    <span>{destaque.leitura} de leitura</span>
                   </div>
                   <span className="blog-featured__read">
                     Ler artigo completo <span>→</span>
@@ -525,7 +535,7 @@ export default function ConteudosPage() {
           <div className="container">
             {filtrados.length === 0 && !(destaque && catAtiva==='Todos' && !busca) ? (
               <div className="blog-empty">
-                <span className="blog-empty-icon">🔍</span>
+                <div className="blog-empty-icon"><Search /></div>
                 <p>Nenhum artigo encontrado.</p>
               </div>
             ) : (
@@ -550,8 +560,8 @@ export default function ConteudosPage() {
         <div className="blog-article-bg" onClick={() => setArtigo(null)}>
           <div className="blog-article" onClick={e => e.stopPropagation()}>
             <div className={`blog-article__hero blog-card__thumb--${artigo.cat}`}>
-              <span className="blog-article__hero-emoji" style={{ fontSize:'6rem', filter:'drop-shadow(0 4px 24px rgba(0,0,0,.5))' }}>{artigo.emoji}</span>
-              <button className="blog-article__close" onClick={() => setArtigo(null)}>✕</button>
+              {(() => { const ci = CAT_ICONS[artigo.cat]; return ci ? <div className="blog-article__hero-icon"><ci.Icon style={{stroke:ci.stroke}} /></div> : null; })()}
+              <button className="blog-article__close" onClick={() => setArtigo(null)}><X /></button>
             </div>
             <div className="blog-article__body">
               <div className="blog-article__eyebrow">
@@ -560,19 +570,19 @@ export default function ConteudosPage() {
               </div>
               <h1 className="blog-article__title">{artigo.titulo}</h1>
               <div className="blog-article__meta">
-                <span>✍️ {artigo.ong}</span>
+                <span>por {artigo.ong}</span>
                 <span>·</span>
-                <span>📅 {artigo.data}</span>
+                <span>{artigo.data}</span>
                 <span>·</span>
-                <span>⏱ {artigo.leitura} de leitura</span>
+                <span>{artigo.leitura} de leitura</span>
               </div>
               <div
                 className="blog-article__content"
                 dangerouslySetInnerHTML={{ __html: artigo.conteudo }}
               />
               <div className="blog-article__footer">
-                <Link to="/triagem" className="btn btn-primary" onClick={() => setArtigo(null)}>
-                  🆘 Preciso de Ajuda →
+                <Link to="/triagem" className="btn btn-primary" onClick={() => setArtigo(null)} style={{display:'flex',alignItems:'center',gap:7}}>
+                  <AlertTriangle size={14}/> Preciso de Ajuda →
                 </Link>
                 <button className="btn btn-ghost" onClick={() => setArtigo(null)}>
                   ← Voltar
@@ -589,11 +599,12 @@ export default function ConteudosPage() {
 }
 
 function BlogCard({ post, onOpen }) {
+  const ci = CAT_ICONS[post.cat];
   return (
     <article className="blog-card" onClick={() => onOpen(post)}>
       <div className={`blog-card__thumb blog-card__thumb--${post.cat}`}>
         <div className="blog-card__thumb-bg" />
-        <span className="blog-card__thumb-emoji">{post.emoji}</span>
+        {ci && <div className="blog-card__thumb-icon"><ci.Icon style={{stroke:ci.stroke}} /></div>}
       </div>
       <div className="blog-card__body">
         <div className="blog-card__tags">

@@ -2,6 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
+import {
+  User, Brain, AlertTriangle, MessageSquare, CheckCircle,
+  ArrowUpRight, Save, Heart, Map, UserCheck, Send
+} from 'lucide-react';
 
 const css = `
 .psichat-page {
@@ -309,7 +313,8 @@ const css = `
   text-align: center;
   padding: 32px;
 }
-.psichat-empty__icon { font-size: 3.5rem; margin-bottom: 16px; opacity: .45; }
+.psichat-empty__icon { display:flex; align-items:center; justify-content:center; margin-bottom: 16px; }
+.psichat-empty__icon svg { width:56px; height:56px; stroke:rgba(239,238,234,.2); fill:none; stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; }
 .psichat-empty__title { font-weight: 700; font-size: 1.1rem; color: rgba(239,238,234,.5); margin-bottom: 7px; }
 .psichat-empty__sub { font-size: .85rem; color: rgba(239,238,234,.3); }
 
@@ -441,7 +446,7 @@ const CASOS_MOCK = [
       { role:'user', text:'Quero saber sobre medidas protetivas.', time:'09:18' },
       { role:'prof', text:'Olá! Posso te ajudar. As medidas protetivas de urgência podem ser solicitadas em qualquer delegacia.', time:'09:19' },
       { role:'user', text:'Obrigada, fui lá e consegui!', time:'09:45' },
-      { role:'prof', text:'Que ótima notícia! Estamos sempre aqui se precisar. Cuide-se. 💙', time:'09:46' },
+      { role:'prof', text:'Que ótima notícia! Estamos sempre aqui se precisar. Cuide-se.', time:'09:46' },
     ],
     encerrado: true,
   },
@@ -453,7 +458,7 @@ const RESPOSTAS_RAPIDAS = [
   'Obrigada por confiar em nós. Vou te ajudar passo a passo.',
   'Para solicitar medidas protetivas, você pode ir a qualquer delegacia.',
   'Ligue 180 — a Central de Atendimento à Mulher funciona 24h.',
-  '💙 Você não está sozinha. Estamos aqui.',
+  'Você não está sozinha. Estamos aqui.',
 ];
 
 export default function ChatPsicologoPage() {
@@ -524,8 +529,8 @@ export default function ChatPsicologoPage() {
           gap:12, flexWrap:'wrap',
         }}>
           <div style={{display:'flex',alignItems:'center',gap:10}}>
-            <span style={{fontSize:'1rem'}}>
-              {user.especialidade === 'psicologo' ? '🧠' : user.especialidade === 'assistente_social' ? '🤝' : '👤'}
+            <span style={{display:'flex',alignItems:'center',justifyContent:'center',width:30,height:30,borderRadius:'50%',background:'linear-gradient(135deg,rgba(107,104,152,.3),rgba(155,143,255,.2))'}}>
+              {user.especialidade === 'psicologo' ? <Brain size={15} style={{stroke:'#C4BCFF'}} /> : user.especialidade === 'assistente_social' ? <UserCheck size={15} style={{stroke:'#C4BCFF'}} /> : <User size={15} style={{stroke:'#C4BCFF'}} />}
             </span>
             <div>
               <span style={{fontWeight:700,fontSize:'.85rem',color:'#F4F6F8'}}>{user.nome}</span>
@@ -556,7 +561,7 @@ export default function ChatPsicologoPage() {
               <div className="psichat-queue__filters">
                 {[
                   { key:'todos',  label:'Todos'  },
-                  { key:'sos',    label:'🆘 SOS'  },
+                  { key:'sos',    label:'SOS'    },
                   { key:'ativos', label:'Ativos' },
                   { key:'feitos', label:'Feitos' },
                 ].map(f => (
@@ -581,7 +586,7 @@ export default function ChatPsicologoPage() {
                   <div className="case-card__top">
                     <span className="case-card__id">{c.id}</span>
                     <span className={`case-card__pill case-card__pill--${c.encerrado?'feito':c.tipo}`}>
-                      {c.encerrado ? '✓ Feito' : c.tipo === 'sos' ? '🆘 SOS' : '💬 Chat'}
+                      {c.encerrado ? <><CheckCircle size={9}/> Feito</> : c.tipo === 'sos' ? <><AlertTriangle size={9}/> SOS</> : <><MessageSquare size={9}/> Chat</>}
                     </span>
                   </div>
                   <p className="case-card__preview">{c.preview}</p>
@@ -600,12 +605,14 @@ export default function ChatPsicologoPage() {
               <>
                 <div className="psichat-header">
                   <div className="psichat-header__info">
-                    <div className="psichat-header__avatar">👤</div>
+                    <div className="psichat-header__avatar" style={{display:'flex',alignItems:'center',justifyContent:'center',background:'linear-gradient(135deg,#2D2B4E,#4A4870)'}}>
+                    <User size={16} style={{stroke:'#C4BCFF'}} />
+                  </div>
                     <div>
                       <p className="psichat-header__name">Usuária anônima · {casoAtivo.id}</p>
                       <p className="psichat-header__status">
                         <span className={`adm-pill adm-pill--${casoAtivo.encerrado?'done':casoAtivo.tipo==='sos'?'sos':'chat'}`} style={{fontSize:'.62rem'}}>
-                          {casoAtivo.encerrado ? '✓ Encerrado' : casoAtivo.tipo==='sos' ? '🆘 SOS' : '💬 Chat ativo'}
+                          {casoAtivo.encerrado ? <><CheckCircle size={9}/> Encerrado</> : casoAtivo.tipo==='sos' ? <><AlertTriangle size={9}/> SOS</> : <><MessageSquare size={9}/> Chat ativo</>}
                         </span>
                         <span style={{marginLeft:8,opacity:.5}}>Risco: {casoAtivo.risco}</span>
                       </p>
@@ -614,8 +621,8 @@ export default function ChatPsicologoPage() {
                   <div className="psichat-header__actions">
                     {!casoAtivo.encerrado && (
                       <>
-                        <button className="psichat-hbtn" onClick={() => alert('Encaminhando para serviço...')}>↗ Encaminhar</button>
-                        <button className="psichat-hbtn psichat-hbtn--done" onClick={encerrar}>✓ Encerrar</button>
+                        <button className="psichat-hbtn" onClick={() => alert('Encaminhando para serviço...')} style={{display:'flex',alignItems:'center',gap:5}}><ArrowUpRight size={13}/> Encaminhar</button>
+                        <button className="psichat-hbtn psichat-hbtn--done" onClick={encerrar} style={{display:'flex',alignItems:'center',gap:5}}><CheckCircle size={13}/> Encerrar</button>
                       </>
                     )}
                   </div>
@@ -641,7 +648,11 @@ export default function ChatPsicologoPage() {
                       <div key={i} className="psichat-systag">{msg.text}</div>
                     ) : (
                       <div key={i} className={`psichat-msg psichat-msg--${msg.role}`}>
-                        <div className="psichat-msg__avatar">{msg.role==='user' ? '👤' : '🧠'}</div>
+                        <div className="psichat-msg__avatar">
+                        {msg.role==='user'
+                          ? <User size={14} style={{stroke:'#C4BCFF'}} />
+                          : <Brain size={14} style={{stroke:'#C4BCFF'}} />}
+                      </div>
                         <div>
                           <div className="psichat-msg__bubble">{msg.text}</div>
                           <p className="psichat-msg__meta">{msg.role==='user' ? 'Usuária' : user.nome} · {msg.time}</p>
@@ -663,14 +674,14 @@ export default function ChatPsicologoPage() {
                         onChange={e => setInputVal(e.target.value)}
                         onKeyDown={handleKeyDown}
                       />
-                      <button className="psichat-send-btn" onClick={enviarMsg} disabled={!inputVal.trim()}>➤</button>
+                <button className="psichat-send-btn" onClick={enviarMsg} disabled={!inputVal.trim()} style={{display:'flex',alignItems:'center',justifyContent:'center'}}><Send size={15}/></button>
                     </div>
                   </div>
                 )}
               </>
             ) : (
-              <div className="psichat-empty">
-                <div className="psichat-empty__icon">💬</div>
+                  <div className="psichat-empty">
+                <div className="psichat-empty__icon"><MessageSquare /></div>
                 <p className="psichat-empty__title">Selecione um atendimento</p>
                 <p className="psichat-empty__sub">Escolha um caso na lista à esquerda para começar o atendimento.</p>
               </div>
@@ -714,14 +725,14 @@ export default function ChatPsicologoPage() {
                 <div className="psichat-info__section">
                   <p className="psichat-info__sect-title">Ações Rápidas</p>
                   <div className="psichat-actions">
-                    <button className="psichat-action-btn" onClick={() => alert('Encaminhando para delegacia...')}>
-                      👮 Acionar Delegacia
+                    <button className="psichat-action-btn" onClick={() => alert('Encaminhando para delegacia...')} style={{display:'flex',alignItems:'center',gap:8}}>
+                      <AlertTriangle size={14}/> Acionar Delegacia
                     </button>
-                    <button className="psichat-action-btn" onClick={() => alert('Abrindo mapa de serviços...')}>
-                      🏥 Ver Serviços Próximos
+                    <button className="psichat-action-btn" onClick={() => alert('Abrindo mapa de serviços...')} style={{display:'flex',alignItems:'center',gap:8}}>
+                      <Map size={14}/> Ver Serviços Próximos
                     </button>
-                    <button className="psichat-action-btn" onClick={() => alert('Chamando supervisora...')}>
-                      👩‍⚕️ Escalar para Supervisora
+                    <button className="psichat-action-btn" onClick={() => alert('Chamando supervisora...')} style={{display:'flex',alignItems:'center',gap:8}}>
+                      <UserCheck size={14}/> Escalar para Supervisora
                     </button>
                     {!casoAtivo.encerrado && (
                       <button className="psichat-action-btn psichat-action-btn--danger" onClick={encerrar}>
@@ -740,8 +751,8 @@ export default function ChatPsicologoPage() {
                     onChange={e => setNotas(e.target.value)}
                   />
                   {notas && (
-                    <button className="psichat-action-btn" style={{marginTop:8}} onClick={() => alert('Notas salvas!')}>
-                      💾 Salvar Notas
+                    <button className="psichat-action-btn" style={{marginTop:8, display:'flex', alignItems:'center', gap:8}} onClick={() => alert('Notas salvas!')}>
+                      <Save size={14}/> Salvar Notas
                     </button>
                   )}
                 </div>

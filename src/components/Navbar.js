@@ -1,31 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, ESPEC_CHAT, ESPEC_MAPA } from '../contexts/AuthContext';
+import {
+  LayoutDashboard, BookOpen, Users, Map, MessageSquare,
+  LogOut, ChevronDown, AlertTriangle, BrainCircuit,
+  Shield
+} from 'lucide-react';
 
 const css = `
 /* ══════════════════════════════════════════
    NAVBAR — Pill flutuante glassmorphism
-   
-   FIX DA LINHA/DIVISÃO:
-   A navbar usa position:fixed e fica flutuando
-   sobre a página. O padding-left/right de 16px
-   garante que a pill NÃO encoste nas bordas da
-   viewport — eliminando a "linha de ponta a ponta".
-   O fundo da pill é rgba com backdrop-filter,
-   então não cria contraste com a página abaixo.
 ══════════════════════════════════════════ */
 .navbar{
   position:fixed;
   top:0;left:0;right:0;
   z-index:1000;
-  /* Padding lateral: pill não encoste nas bordas */
   padding:12px 16px 0;
-  /* SEM background próprio — só a pill tem fundo */
   background:transparent;
-  pointer-events:none; /* cliques passam por onde não tem pill */
+  pointer-events:none;
 }
 
-/* A pill em si */
 .navbar__pill{
   display:flex;
   align-items:center;
@@ -41,10 +35,9 @@ const css = `
   border-radius:100px;
   box-shadow:0 8px 32px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.05) inset;
   transition:background .35s,box-shadow .35s;
-  pointer-events:all; /* restaura cliques dentro da pill */
+  pointer-events:all;
   position:relative;
 }
-/* Linha de brilho no topo da pill */
 .navbar__pill::before{
   content:'';
   position:absolute;
@@ -61,7 +54,8 @@ const css = `
 
 /* Logo */
 .navbar__logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0;}
-.navbar__logo-owl{font-size:1.4rem;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(155,143,255,.55));}
+.navbar__logo-icon{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,rgba(107,104,152,.3),rgba(155,143,255,.2));border:1px solid rgba(155,143,255,.3);}
+.navbar__logo-icon svg{width:16px;height:16px;stroke:#9B8FFF;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .navbar__logo-name{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.22rem;letter-spacing:.12em;color:#F4F6F8;line-height:1;border-bottom:2px solid rgba(155,143,255,.6);padding-bottom:1px;}
 
 /* Links */
@@ -73,8 +67,7 @@ const css = `
 /* Lado direito */
 .navbar__right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 
-/* ── BOTÃO SOS — EMERGÊNCIA ──
-   Vermelho pulsante, claramente urgente */
+/* SOS */
 .navbar__sos{
   display:inline-flex;align-items:center;gap:6px;
   background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.38);
@@ -83,10 +76,10 @@ const css = `
   transition:all .25s;text-decoration:none;
 }
 .navbar__sos:hover{background:rgba(255,71,87,.22);border-color:#FF4757;box-shadow:0 0 16px rgba(255,71,87,.25);}
+.navbar__sos svg{width:12px;height:12px;stroke:#FF4757;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 .navbar__sos-dot{width:6px;height:6px;border-radius:50%;background:#FF4757;box-shadow:0 0 5px #FF4757;flex-shrink:0;animation:sosPulse 1.4s ease-in-out infinite;}
 
-/* ── BOTÃO PSITECH — CHAT / IA ──
-   Roxo preenchido, convida ao atendimento */
+/* PsiTech */
 .navbar__psitech{
   display:inline-flex;align-items:center;gap:7px;
   background:linear-gradient(135deg,#7B6FE8,#9B8FFF);color:#fff;
@@ -95,8 +88,9 @@ const css = `
   box-shadow:0 4px 16px rgba(155,143,255,.35);border:none;cursor:pointer;
 }
 .navbar__psitech:hover{background:linear-gradient(135deg,#9B8FFF,#B8AEFF);box-shadow:0 6px 22px rgba(155,143,255,.5);transform:translateY(-1px);}
+.navbar__psitech svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 
-/* Botão login (sem sessão) */
+/* Botão login */
 .navbar__login-btn{
   display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;
   color:rgba(239,238,234,.65);font-family:'Poppins',sans-serif;font-weight:500;
@@ -104,7 +98,7 @@ const css = `
 }
 .navbar__login-btn:hover{color:#F4F6F8;background:rgba(107,104,152,.18);}
 
-/* Botão de role (logado) */
+/* Role btn */
 .navbar__role-btn{
   display:inline-flex;align-items:center;gap:7px;
   background:rgba(155,143,255,.16);border:1.5px solid rgba(155,143,255,.35);
@@ -112,8 +106,8 @@ const css = `
   padding:8px 16px;border-radius:100px;cursor:pointer;transition:all .25s;
 }
 .navbar__role-btn:hover{background:rgba(155,143,255,.24);border-color:#9B8FFF;color:#fff;box-shadow:0 0 16px rgba(155,143,255,.22);}
-.navbar__role-chevron{font-size:.6rem;opacity:.6;transition:transform .25s;display:inline-block;}
-.navbar__role-chevron--open{transform:rotate(180deg);}
+.navbar__role-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .25s;}
+.navbar__role-btn svg.open{transform:rotate(180deg);}
 
 /* Dropdown */
 .navbar__user-wrap{position:relative;}
@@ -139,6 +133,7 @@ const css = `
 .navbar__menu-item:hover{background:rgba(107,104,152,.18);color:#F4F6F8;}
 .navbar__menu-item--danger{color:rgba(255,71,87,.7);}
 .navbar__menu-item--danger:hover{background:rgba(255,71,87,.1);color:#FF4757;}
+.navbar__menu-item svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 
 /* Hamburger */
 .navbar__burger{display:none;flex-direction:column;gap:5px;background:rgba(107,104,152,.18);border:1px solid rgba(107,104,152,.24);padding:8px 10px;border-radius:100px;cursor:pointer;}
@@ -196,26 +191,26 @@ export default function Navbar() {
     if (!user) return null;
     if (user.role === 'adm') return (
       <>
-        <Link to="/admin"              className="navbar__menu-item">🗂️ Dashboard</Link>
-        <Link to="/admin"              className="navbar__menu-item" onClick={()=>navigate('/admin?tab=conteudos')}>📚 Conteúdos</Link>
-        <Link to="/admin?tab=usuarios" className="navbar__menu-item">👥 Usuários</Link>
-        <Link to="/mapa"               className="navbar__menu-item">🗺️ Mapa</Link>
-        <Link to="/chat-psicologo"     className="navbar__menu-item">💬 Atendimentos</Link>
+        <Link to="/admin"              className="navbar__menu-item"><LayoutDashboard /> Dashboard</Link>
+        <Link to="/admin"              className="navbar__menu-item" onClick={()=>navigate('/admin?tab=conteudos')}><BookOpen /> Conteúdos</Link>
+        <Link to="/admin?tab=usuarios" className="navbar__menu-item"><Users /> Usuários</Link>
+        <Link to="/mapa"               className="navbar__menu-item"><Map /> Mapa</Link>
+        <Link to="/chat-psicologo"     className="navbar__menu-item"><MessageSquare /> Atendimentos</Link>
       </>
     );
     if (user.role === 'ong') return (
       <>
-        <Link to="/ong/usuarios"      className="navbar__menu-item">👥 Minha Equipe</Link>
-        <Link to="/admin/conteudos"   className="navbar__menu-item">📚 Conteúdos</Link>
-        <Link to="/chat-psicologo"    className="navbar__menu-item">💬 Atendimentos</Link>
+        <Link to="/ong/usuarios"      className="navbar__menu-item"><Users /> Minha Equipe</Link>
+        <Link to="/admin/conteudos"   className="navbar__menu-item"><BookOpen /> Conteúdos</Link>
+        <Link to="/chat-psicologo"    className="navbar__menu-item"><MessageSquare /> Atendimentos</Link>
       </>
     );
     if (user.role === 'funcionario') {
       if (ESPEC_CHAT.includes(user.especialidade)) return (
-        <Link to="/chat-psicologo" className="navbar__menu-item">💬 Atendimentos</Link>
+        <Link to="/chat-psicologo" className="navbar__menu-item"><MessageSquare /> Atendimentos</Link>
       );
       if (ESPEC_MAPA.includes(user.especialidade)) return (
-        <Link to="/mapa" className="navbar__menu-item">🗺️ Mapa de Campo</Link>
+        <Link to="/mapa" className="navbar__menu-item"><Map /> Mapa de Campo</Link>
       );
     }
     return null;
@@ -228,7 +223,9 @@ export default function Navbar() {
         <div className="navbar__pill">
           {/* Logo */}
           <Link to="/" className="navbar__logo">
-            <span className="navbar__logo-owl">🦉</span>
+            <span className="navbar__logo-icon">
+              <Shield />
+            </span>
             <span className="navbar__logo-name">Nira</span>
           </Link>
 
@@ -243,13 +240,6 @@ export default function Navbar() {
 
           {/* Direita */}
           <div className="navbar__right">
-            {/*
-              SOS → emergência imediata, vai para triagem com modo=sos
-              PsiTech → chat de IA normal (quando sem sessão)
-              São propósitos DIFERENTES:
-              - SOS: "estou em perigo agora"
-              - PsiTech: "quero conversar / fazer triagem"
-            */}
             <Link to="/triagem?modo=sos" className="navbar__sos">
               <span className="navbar__sos-dot" />S.O.S
             </Link>
@@ -258,7 +248,7 @@ export default function Navbar() {
               <div className="navbar__user-wrap">
                 <button className="navbar__role-btn" onClick={() => setUserMenuOpen(v => !v)}>
                   {navLabel()}
-                  <span className={`navbar__role-chevron${userMenuOpen ? ' navbar__role-chevron--open' : ''}`}>▾</span>
+                  <ChevronDown className={userMenuOpen ? 'open' : ''} />
                 </button>
                 {userMenuOpen && (
                   <div className="navbar__user-menu">
@@ -271,15 +261,14 @@ export default function Navbar() {
                     </div>
                     {renderMenuItems()}
                     <button className="navbar__menu-item navbar__menu-item--danger" onClick={handleLogout}>
-                      ↩ Sair
+                      <LogOut /> Sair
                     </button>
                   </div>
                 )}
               </div>
             ) : (
-              /* PsiTech — acesso ao chat IA (diferente do SOS) */
               <Link to="/triagem" className="navbar__psitech">
-                🧠 PsiTech
+                <BrainCircuit /> PsiTech
               </Link>
             )}
 
@@ -295,10 +284,14 @@ export default function Navbar() {
         {links.map(l => (
           <Link key={l.to} to={l.to} className="navbar__mobile-link" onClick={() => setMenuOpen(false)}>{l.label}</Link>
         ))}
-        <Link to="/triagem?modo=sos" className="navbar__mobile-link" style={{color:'#FF4757'}} onClick={() => setMenuOpen(false)}>🆘 S.O.S.</Link>
-        <Link to="/triagem" className="navbar__mobile-link" style={{color:'#9B8FFF'}} onClick={() => setMenuOpen(false)}>🧠 PsiTech</Link>
+        <Link to="/triagem?modo=sos" className="navbar__mobile-link" style={{color:'#FF4757'}} onClick={() => setMenuOpen(false)}>
+          S.O.S.
+        </Link>
+        <Link to="/triagem" className="navbar__mobile-link" style={{color:'#9B8FFF'}} onClick={() => setMenuOpen(false)}>
+          PsiTech
+        </Link>
         {user
-          ? <button style={{background:'none',border:'none',color:'rgba(255,71,87,.8)',cursor:'pointer',fontFamily:"'Poppins',sans-serif",fontSize:'1.1rem',fontWeight:700}} onClick={() => { handleLogout(); setMenuOpen(false); }}>↩ Sair</button>
+          ? <button style={{background:'none',border:'none',color:'rgba(255,71,87,.8)',cursor:'pointer',fontFamily:"'Poppins',sans-serif",fontSize:'1.1rem',fontWeight:700}} onClick={() => { handleLogout(); setMenuOpen(false); }}>Sair</button>
           : <Link to="/login" className="navbar__mobile-link" onClick={() => setMenuOpen(false)}>Entrar</Link>
         }
       </div>

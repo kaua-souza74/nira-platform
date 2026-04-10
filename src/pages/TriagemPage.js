@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import {
+  Shield, User, AlertTriangle, MessageSquare, BookOpen, MapPin,
+  Lock, Send, RefreshCcw
+} from 'lucide-react';
 
 /* ─── CSS ─── */
 const css = `
@@ -124,7 +128,8 @@ const css = `
   gap: 9px;
   flex-shrink: 0;
 }
-.chat-sidebar__anon-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.chat-sidebar__anon-icon { display:flex; align-items:center; flex-shrink: 0; margin-top: 1px; }
+.chat-sidebar__anon-icon svg { width:14px; height:14px; stroke:rgba(155,143,255,.5); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .chat-sidebar__anon-text { font-size: .72rem; color: rgba(239,238,234,.35); line-height: 1.55; }
 
 /* ════════════════════════════
@@ -155,10 +160,10 @@ const css = `
   border-radius: 50%;
   background: linear-gradient(135deg, #6B6898, #9B8FFF);
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
   flex-shrink: 0;
   box-shadow: 0 0 14px rgba(155,143,255,.35);
 }
+.chat-header__avatar svg { width:20px; height:20px; stroke:#fff; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .chat-header__name {
   font-weight: 700;
   font-size: .95rem;
@@ -247,10 +252,10 @@ const css = `
   border-radius: 50%;
   background: linear-gradient(135deg, #4A4870, #9B8FFF);
   display: flex; align-items: center; justify-content: center;
-  font-size: .95rem;
   flex-shrink: 0;
   margin-top: 2px;
 }
+.chat-msg__avatar svg { width:16px; height:16px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .chat-msg--user .chat-msg__avatar {
   background: linear-gradient(135deg, #2D2B4E, #6B6898);
 }
@@ -298,9 +303,9 @@ const css = `
   border-radius: 50%;
   background: linear-gradient(135deg, #4A4870, #9B8FFF);
   display: flex; align-items: center; justify-content: center;
-  font-size: .95rem;
   flex-shrink: 0;
 }
+.chat-typing__avatar svg { width:16px; height:16px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .chat-typing__dots {
   display: flex;
   gap: 5px;
@@ -535,7 +540,8 @@ const css = `
   background: rgba(155,143,255,.1);
   transform: translateY(-2px);
 }
-.chat-welcome__start-icon { font-size: 1.4rem; margin-bottom: 8px; display: block; }
+.chat-welcome__start-icon { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; background:rgba(107,104,152,.18); margin-bottom: 8px; }
+.chat-welcome__start-icon svg { width:18px; height:18px; stroke:rgba(155,143,255,.7); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .chat-welcome__start-title { font-size: .85rem; font-weight: 600; color: #F4F6F8; margin-bottom: 4px; }
 .chat-welcome__start-desc  { font-size: .75rem; color: rgba(239,238,234,.45); line-height: 1.55; }
 
@@ -551,12 +557,12 @@ const css = `
 const FLOW = [
   {
     id: 'start',
-    msg: '🦉 Olá! Sou a **PsiTech**, a IA de triagem da NIRA.\n\nEste espaço é **100% anônimo e seguro**. Nenhum dado pessoal é coletado.\n\nComo posso te ajudar hoje?',
+    msg: 'Olá! Sou a **PsiTech**, a IA de triagem da NIRA.\n\nEste espaço é **100% anônimo e seguro**. Nenhum dado pessoal é coletado.\n\nComo posso te ajudar hoje?',
     options: [
-      { text: '🆘 Estou em perigo agora',       next: 'perigo'   },
-      { text: '💬 Preciso conversar',            next: 'conversar' },
-      { text: '📋 Quero entender meus direitos', next: 'direitos' },
-      { text: '🏥 Preciso de ajuda próxima',     next: 'servicos' },
+      { text: 'Estou em perigo agora',        next: 'perigo'   },
+      { text: 'Preciso conversar',             next: 'conversar' },
+      { text: 'Quero entender meus direitos', next: 'direitos' },
+      { text: 'Preciso de ajuda próxima',     next: 'servicos' },
     ],
   },
   {
@@ -765,10 +771,10 @@ const FLOW = [
   },
   {
     id: 'guarda',
-    msg: '👶 Em situações de violência doméstica, é possível solicitar **guarda provisória de urgência** na delegacia ou no CRAM.\n\nO juiz pode conceder a guarda e impedir que o agressor leve os filhos em até 48 horas.\n\nVocê quer encontrar um serviço jurídico de apoio próximo?',
+    msg: 'Em situações de violência doméstica, é possível solicitar **guarda provisória de urgência** na delegacia ou no CRAM.\n\nO juiz pode conceder a guarda e impedir que o agressor leve os filhos em até 48 horas.\n\nVocê quer encontrar um serviço jurídico de apoio próximo?',
     options: [
-      { text: '📍 Ver serviços próximos', next: 'final_servicos' },
-      { text: '⬅️ Voltar aos direitos',   next: 'direitos'       },
+      { text: 'Ver serviços próximos', next: 'final_servicos' },
+      { text: 'Voltar aos direitos',   next: 'direitos'       },
     ],
     risco: 'baixo',
   },
@@ -924,7 +930,7 @@ export default function TriagemPage() {
             </div>
 
             <div className="chat-sidebar__anon">
-              <span className="chat-sidebar__anon-icon">🔒</span>
+              <span className="chat-sidebar__anon-icon"><Lock /></span>
               <p className="chat-sidebar__anon-text">Todas as conversas são 100% anônimas. Nenhum dado pessoal é armazenado.</p>
             </div>
           </aside>
@@ -936,7 +942,7 @@ export default function TriagemPage() {
             {chatAtivo ? (
               <div className="chat-header">
                 <div className="chat-header__info">
-                  <div className="chat-header__avatar">🦉</div>
+                  <div className="chat-header__avatar"><Shield /></div>
                   <div>
                     <p className="chat-header__name">PsiTech — IA NIRA</p>
                     <p className="chat-header__status">
@@ -948,25 +954,25 @@ export default function TriagemPage() {
                 </div>
                 <div className="chat-header__actions">
                   <button className="chat-header__btn chat-header__btn--danger" onClick={ativarSOS}>
-                    🆘 S.O.S.
+                    <AlertTriangle size={13}/> S.O.S.
                   </button>
                   <button className="chat-header__btn" onClick={() => alert('Conectando com atendente humano...')}>
-                    💬 Atendente humana
+                    <MessageSquare size={13}/> Atendente humana
                   </button>
-                  <button className="chat-header__btn" onClick={novoChat}>↩ Nova conversa</button>
+                  <button className="chat-header__btn" onClick={novoChat}><RefreshCcw size={13}/> Nova conversa</button>
                 </div>
               </div>
             ) : (
               <div className="chat-header">
                 <div className="chat-header__info">
-                  <div className="chat-header__avatar">🦉</div>
+                  <div className="chat-header__avatar"><Shield /></div>
                   <div>
                     <p className="chat-header__name">PsiTech — IA NIRA</p>
                     <p className="chat-header__status"><span className="chat-header__status-dot" />Disponível</p>
                   </div>
                 </div>
                 <div className="chat-header__actions">
-                  <button className="chat-header__btn chat-header__btn--danger" onClick={ativarSOS}>🆘 S.O.S.</button>
+                  <button className="chat-header__btn chat-header__btn--danger" onClick={ativarSOS}><AlertTriangle size={13}/> S.O.S.</button>
                 </div>
               </div>
             )}
@@ -974,17 +980,17 @@ export default function TriagemPage() {
             {/* Tela de boas vindas ou mensagens */}
             {!chatAtivo ? (
               <div className="chat-welcome">
-                <span className="chat-welcome__owl">🦉</span>
+                <div className="chat-header__avatar" style={{width:72,height:72,marginBottom:18,alignSelf:'center'}}><Shield /></div>
                 <h2 className="chat-welcome__title">Olá. Estou aqui por você.</h2>
                 <p className="chat-welcome__sub">
                   Este é um espaço seguro, anônimo e sem julgamentos. Sou a PsiTech, a IA de triagem da NIRA. Escolha como prefere começar:
                 </p>
                 <div className="chat-welcome__starts">
                   {[
-                    { icon:'🆘', title:'Estou em perigo', desc:'Preciso de ajuda agora', start:'perigo' },
-                    { icon:'💬', title:'Quero conversar',  desc:'Preciso ser ouvida',     start:'conversar' },
-                    { icon:'📋', title:'Meus direitos',    desc:'Quero me informar',      start:'direitos'  },
-                    { icon:'🏥', title:'Buscar apoio',     desc:'Serviços próximos',      start:'servicos'  },
+                    { Icon:AlertTriangle, title:'Estou em perigo', desc:'Preciso de ajuda agora' },
+                    { Icon:MessageSquare, title:'Quero conversar',  desc:'Preciso ser ouvida'     },
+                    { Icon:BookOpen,      title:'Meus direitos',    desc:'Quero me informar'      },
+                    { Icon:MapPin,        title:'Buscar apoio',     desc:'Serviços próximos'      },
                   ].map(s => (
                     <div key={s.title} className="chat-welcome__start" onClick={() => {
                       setChatAtivo(true);
@@ -996,7 +1002,7 @@ export default function TriagemPage() {
                         setMessages([{ role:'ia', text: step.msg, options: step.options, time: formatTime() }]);
                       }, 900);
                     }}>
-                      <span className="chat-welcome__start-icon">{s.icon}</span>
+                      <div className="chat-welcome__start-icon"><s.Icon /></div>
                       <p className="chat-welcome__start-title">{s.title}</p>
                       <p className="chat-welcome__start-desc">{s.desc}</p>
                     </div>
@@ -1010,7 +1016,7 @@ export default function TriagemPage() {
                 {messages.map((msg, i) => (
                   <div key={i}>
                     <div className={`chat-msg chat-msg--${msg.role}`}>
-                      <div className="chat-msg__avatar">{msg.role === 'ia' ? '🦉' : '👤'}</div>
+                      <div className="chat-msg__avatar">{msg.role === 'ia' ? <Shield /> : <User />}</div>
                       <div>
                         <div
                           className="chat-msg__bubble"
@@ -1038,14 +1044,14 @@ export default function TriagemPage() {
                           <div className="chat-risk-card" style={{ marginTop: 12 }}>
                             <p className="chat-risk-card__label">Triagem concluída</p>
                             <div className={`chat-risk-card__level chat-risk-card__level--${msg.risco}`}>
-                              {msg.risco === 'alto' ? '🔴 Risco Alto' : msg.risco === 'medio' ? '🟡 Risco Médio' : '🟢 Monitoramento'}
+                              {msg.risco === 'alto' ? 'Risco Alto' : msg.risco === 'medio' ? 'Risco Médio' : 'Monitoramento'}
                             </div>
                             <p style={{ fontSize:'.82rem', color:'rgba(239,238,234,.6)', lineHeight:1.65 }}>
                               Nossa equipe foi notificada. Uma atendente humana entrará em contato em breve.
                             </p>
                             <div className="chat-risk-card__actions">
-                              <button className="btn btn-danger btn-sm" onClick={ativarSOS}>🆘 S.O.S.</button>
-                              <button className="btn btn-ghost btn-sm" onClick={novoChat}>↩ Nova triagem</button>
+                              <button className="btn btn-danger btn-sm" onClick={ativarSOS} style={{display:'flex',alignItems:'center',gap:5}}><AlertTriangle size={13}/> S.O.S.</button>
+                              <button className="btn btn-ghost btn-sm" onClick={novoChat} style={{display:'flex',alignItems:'center',gap:5}}><RefreshCcw size={13}/> Nova triagem</button>
                             </div>
                           </div>
                         )}
@@ -1057,7 +1063,7 @@ export default function TriagemPage() {
                 {/* Digitando... */}
                 {digitando && (
                   <div className="chat-typing">
-                    <div className="chat-typing__avatar">🦉</div>
+                    <div className="chat-typing__avatar"><Shield /></div>
                     <div className="chat-typing__dots">
                       <div className="chat-typing__dot" />
                       <div className="chat-typing__dot" />
@@ -1096,10 +1102,10 @@ export default function TriagemPage() {
                     disabled={!inputVal.trim() || digitando}
                     title="Enviar"
                   >
-                    ➤
+                    <Send size={16} />
                   </button>
                 </div>
-                <p className="chat-input-hint">🔒 Conversa anônima · Enter para enviar · Shift+Enter para nova linha</p>
+                <p className="chat-input-hint" style={{display:'flex',alignItems:'center',gap:6,justifyContent:'center'}}><Lock size={11}/> Conversa anônima · Enter para enviar · Shift+Enter para nova linha</p>
               </div>
             )}
           </div>
